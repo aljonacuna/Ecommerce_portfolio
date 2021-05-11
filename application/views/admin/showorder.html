@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+	<html>
+	<head>
+		<title></title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1">
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+		<script type="text/javascript" src="js/bootstrap.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/admin_nav.css">
+		<link rel="stylesheet" type="text/css" href="css/showorder.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	</head>
+	<body>
+		<nav class="navbar navbar-expand-lg navbar-dark" id="navbar">
+			<div class="container-fluid">
+				<a class="navbar-brand" href="#">Dashboard</a>
+			    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+			      <span class="navbar-toggler-icon"></span>
+			    </button>
+			    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+			    	<ul class="navbar-nav me-auto mb-2 mb-lg-0" id="nav-ul">
+			    		<li class="nav-item nav-li" id="orders">
+				         	<a class="nav-link nav-li" href="#">Orders</a>
+				        </li>
+			    		<li class="nav-item" id="products-li">
+			    			<a class="nav-link  nav-li" aria-current="page" href="product_page.html">Products</a>
+			        	</li>
+				        <li class="nav-item" id="logoff-li">
+				          <a class="btn btn-outline-light" href="#">Log off</a>
+				        </li>
+			      </ul>
+			    </div>
+			</div>
+		</nav>
+
+		<!-- shipping and billing info section -->
+		<div class="container-fluid" id="shipping-billing-info">
+			<h5>Order ID : 1</h5>
+			<label id="lbl-shipping">Customer shipping info: </label>
+			<section id="name-section">
+				<label>Name:</label><p>Aljon</p>
+			</section>
+			<section id="address-section">
+				<label>Address:</label><p>123 Lubacan</p>
+			</section>
+			<section id="city-section">
+				<label>City:</label><p>Hagonoy</p>
+			</section>
+			<section id="town-section">
+				<label>Name:</label><p>Lubacan</p>
+			</section>
+			<section id="zip-section">
+				<label>Name:</label><p>6444</p>
+			</section>
+			<label id="lbl-billing">Customer billing info: </label>
+			<section id="name-section">
+				<label>Name:</label><p>Aljon</p>
+			</section>
+			<section id="address-section">
+				<label>Address:</label><p>123 Lubacan</p>
+			</section>
+			<section id="city-section">
+				<label>City:</label><p>Hagonoy</p>
+			</section>
+			<section id="town-section">
+				<label>Name:</label><p>Lubacan</p>
+			</section>
+			<section id="zip-section">
+				<label>Name:</label><p>6444</p>
+			</section>
+		</div>
+
+		<div class="container-fluid" id="order-details">
+
+		<!-- list of orders -->
+			<div class="container-fluid" id="order-section">
+				<table class="table table-hover">
+					<tr class="bg-success">
+						<th scope="col">ID</th>
+						<th scope="col">Item</th>
+						<th scope="col">Price</th>
+						<th scope="col">Quantity</th>
+						<th scope="col">Total</th>
+				    </tr>
+					<tr>
+						<th><a href="showorder.html">1</a></th>
+						<td>Red horse</td>
+						<td>P55.99</td>
+						<td>6</td>
+						<td>P55.99</td>
+					</tr>
+					<tr>
+						<th><a href="showorder.html">1</a></th>
+						<td>Red horse</td>
+						<td>P55.99</td>
+						<td>6</td>
+						<td>P55.99</td>
+					</tr>
+					<tr>
+						<th><a href="showorder.html">1</a></th>
+						<td>Red horse</td>
+						<td>P55.99</td>
+						<td>6</td>
+						<td>P55.99</td>
+					</tr>
+					<tr>
+						<th><a href="showorder.html">1</a></th>
+						<td>Red horse</td>
+						<td>P55.99</td>
+						<td>6</td>
+						<td>P55.99</td>
+					</tr>
+					<tr>
+						<th><a href="showorder.html">1</a></th>
+						<td>Red horse</td>
+						<td>P55.99</td>
+						<td>6</td>
+						<td>P55.99</td>
+					</tr>
+					<tr>
+						<th><a href="showorder.html">1</a></th>
+						<td>Red horse</td>
+						<td>P55.99</td>
+						<td>6</td>
+						<td>P55.99</td>
+					</tr>
+				</table>
+			</div>
+			<div class="container-fluid" id="status-subtotal">
+				<section class="alert alert-success" role="alert" id="order-status">
+					<p>Status: shipped</p>
+				</section>
+				<section class="container-fluid" id="order-subtotal">
+					<p id="total-fee-p">Sub total: P550.00</p>
+					<p id="total-fee-p">Shipping: P250.00</p>
+					<p id="total-fee-p">Total price: P55.99</p>
+				</section>
+			</div>
+		</div>
+	</body>
+</html>

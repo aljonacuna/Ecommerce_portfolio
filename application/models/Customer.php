@@ -1,0 +1,298 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
+
+	class Customer extends CI_Model {
+		
+		public function __construct() {
+			parent::__construct();
+			
+		}
+
+		//start of getting all the products
+
+		public function get_all_products($start, $limit) {
+			if ($this->session->userdata("search") == FALSE) {
+				return $this->db->query("SELECT * from products limit $start, $limit")->result_array();
+			}
+			else {
+				$search = $this->session->userdata("search");
+				if (isset($search['category'])) {
+					return $this->db->query("SELECT products.name, products.id, products.image, products.category_id, products.price from products 
+							LEFT JOIN categories ON categories.id = products.category_id
+							WHERE categories.name = ? limit $start, $limit",array($search))->result_array();
+				}
+				else{
+					$search = $search['search'];
+					$search = "%".$search."%";
+					return $this->db->query("SELECT * from products
+											WHERE name LIKE ? limit $start, $limit",array($search))->result_array();
+				}
+				
+			}
+		}
+
+		//end of getting all the products
+
+		/*-----------------------------------------------------------------------------------------------------------*/
+
+		//start get product price
+
+		public function get_price($id) {
+			return $this->db->query("SELECT price from products WHERE id = ?",array($id))->row_array();
+		}
+
+		//end get product price
+		/*-----------------------------------------------------------------------------------------------------------*/
+
+
+		//start count all the products
+
+		public function get_totprod_count() {
+			if ($this->session->userdata("search") == FALSE) {
+				return $this->db->query("SELECT * from products")->num_rows();
+			}
+			else {
+				$search = $this->session->userdata("search");
+				return $this->db->query("SELECT products.name, products.price from products 
+							LEFT JOIN categories ON categories.id = products.category_id
+							WHERE categories.name = ?" ,array($search))->num_rows();
+			}
+		}
+
+		//end count all the products
+
+		/*------------------------------------------------------------------------------------------------------*/
+
+		//start get user address
+
+		public function get_address($id) {
+			return $this->db->query("SELECT addresses.street, addresses.city, addresses.zip,
+				 addresses.town, addresses_role.role, addresses.id FROM addresses
+				INNER JOIN addresses_role on addresses.id = addresses_role.address_id
+				INNER JOIN users on addresses_role.user_id = users.id
+				WHERE users.id = ?",array($id))->row_array();
+		}
+
+		//end get user address
+
+		/*------------------------------------------------------------------------------------------------------*/
+
+
+		//start of getting all the categories
+
+		public function get_all_categories() {			
+			return $this->db->query("SELECT categories.name, COUNT(products.category_id)as num_category from categories
+									INNER JOIN products on products.category_id = categories.id
+									GROUP BY categories.id 
+									ORDER BY categories.name asc")->result_array();
+		}
+
+		//end of getting all the categories
+
+		/*------------------------------------------------------------------------------------------------------*/
+
+		//start of getting similar products 
+
+		public function get_similar_products($category_id) {			
+			return $this->db->query("SELECT * from products WHERE category_id = ? limit 0,12",array($category_id))->result_array();
+		}
+
+		//end of getting similar products 
+
+		/*------------------------------------------------------------------------------------------------------*/
+
+		//start of saving the users info
+
+		public function register($post, $user_role) {			
+			$this->form_validation->set_error_delimiters('<div class="error">','</div>');
+			date_default_timezone_set("Asia/Manila");
+			$date = date("Y-m-d H:i:s");
+			$salt = bin2hex(openssl_random_pseudo_bytes(22));			
+			$this->form_validation->set_rules("fname", "First name", "trim|required");
+			$this->form_validation->set_rules("lname", "Last name", "trim|required");
+			$this->form_validation->set_rules("email", "Email", "trim|required|valid_email");
+			$this->form_validation->set_rules("password", "Password", "trim|required|min_length[8]");
+			$this->form_validation->set_rules("cpassword", "Confirm Password", "trim|required|matches[password]");
+			$this->form_validation->set_rules("street", "Street", "trim|required");
+			$this->form_validation->set_rules("city", "City", "trim|required");
+			$this->form_validation->set_rules("town", "Town", "trim|required");
+			$this->form_validation->set_rules("zip", "Zip", "trim|required");
+			if ($this->form_validation->run() === TRUE) {
+				$fname = $post['fname'];
+				$lname = $post['lname'];
+				$email = $post['email'];
+				$pass = $post['password'];
+				$cpass = $post['cpassword'];
+				$street = $post['street'];
+				$city = $post['city'];
+				$town = $post['town'];
+				$zip = $post['zip'];
+				//encrypt pass using md5 and salt
+				$encrypt_pass = md5($pass.''.$salt);
+				/*if user is valid to the following codes */
+				if ($this->is_name_has_number($fname, $lname)) {
+					/*check if there are user with the same email address if email already exist 
+					do the else*/
+					if ($this->isExist($email) == 0) {
+						$address_id = $this->save_address($street, $town, $city, $zip);
+						$query = "INSERT INTO users (email, password, salt, fname, lname, user_role, 
+						created_at, updated_at) VALUES(?,?,?,?,?,?,?,?)";
+						$values = array($email, $encrypt_pass, $salt, $fname, $lname, $user_role, $date, $date);
+						$result = $this->db->query($query, $values);
+						$id = $this->db->insert_id();
+						$query_addressrole = "INSERT INTO addresses_role (role, address_id, user_id) VALUES(?,?,?)";
+						$values_addressrole = array($user_role, $address_id, $id);
+						return $this->db->query($query_addressrole, $values_addressrole);
+					}
+					else {
+						$this->session->set_flashdata("msg_reg","email");
+						return false;
+					}
+
+				}
+				else {
+					$this->session->set_flashdata("msg_reg","invalidname");
+					return false;
+				}
+			}
+			else {
+				foreach ($this->input->post() as $key => $value) {
+					$msg[$key] = form_error($key);
+				}
+				$this->session->set_flashdata("msg_reg",$msg);
+				return false;
+			}
+		}
+
+		//end of saving the users info
+
+		/*-----------------------------------------------------------------------------------------------------*/
+
+		//start of users authentication
+		public function login($post) {
+			$this->form_validation->set_rules("email_login", "Email", "trim|required|valid_email");
+			$this->form_validation->set_rules("password_login", "Password", "trim|required|min_length[8]");
+			$this->form_validation->set_error_delimiters('<div class="error">', '</div>');
+			if ($this->form_validation->run() === TRUE) {
+				$email = $post['email_login'];
+				$pass = $post['password_login'];
+				$result	= $this->db->query("SELECT * from users WHERE email = ?",array($email))->row_array();
+				$encrypt_pass = md5($pass.''.$result['salt']);
+				if ($encrypt_pass == $result['password']) {
+					$user = array(
+							"id"=>$result["id"],
+							"fname"=>$result["fname"],
+							"lname"=>$result["lname"],
+							"is_logged_in"=>true
+					);
+					$this->session->set_userdata("info",$user);
+					return $result;
+				}
+				else {
+					$this->session->set_flashdata("msg_login","incorrect");
+					return false;
+				}
+			}
+			else {			
+				foreach ($this->input->post() as $key => $value) {
+					$msg[$key] = form_error($key);
+				}
+				$this->session->set_flashdata("msg_login",$msg);
+				return false;
+			}
+		}
+		/*-----------------------------------------------------------------------------------------------------*/
+
+		//start of saving the orders
+
+		public function save_orders_transactions($address, $orders, $info) {
+			date_default_timezone_set("Asia/Manila");
+			$date = date("Y-m-d H:i:s");
+			$query_orders = "INSERT INTO  orders (quantity, total, created_at, updated_at, user_id, product_id,
+			transaction_id) VALUES(?,?,?,?,?,?,?)";
+			$query_transaction = "INSERT INTO transactions (billing_id, shipping_id, status_id, created_at, updated_at)
+			 VALUES (?,?,?,?,?)";
+			$values_transaction = array($address['id'], $address['id'], 0, $date, $date);
+			$result = $this->db->query($query_transaction, $values_transaction);
+			$id = $this->db->insert_id();
+			if ($result == TRUE) {
+				foreach ($orders as $value) {
+					$values = array($value['quantity'], $value['tot_price'], $date ,$date, 
+						$info['id'], $value['prod_id'], $id);
+					$this->db->query($query_orders, $values);
+				}
+				$this->session->unset_userdata("orders");
+			}
+			
+		}
+
+		//end of saving the orders
+
+		/*-----------------------------------------------------------------------------------------------------*/
+		//start of saving the user address
+
+		public function save_address($street, $town, $city, $zip) {
+			$query = "INSERT INTO addresses (street, city, zip, town) VALUES(?,?,?,?)";
+			$values = array($street, $city, $zip, $town);
+			$this->db->query($query, $values);
+			return $this->db->insert_id();
+		}
+
+		//end of saving the user address
+		/*-----------------------------------------------------------------------------------------------------*/
+
+		//orders history
+		public function order_history($id) {
+			return $this->db->query("SELECT products.image, products.name, products.description,
+				products.price, orders.product_id, orders.created_at, orders.quantity,
+				orders.total, orders.user_id FROM orders
+				LEFT JOIN products ON orders.product_id = products.id
+				LEFT JOIN users ON orders.user_id = users.id
+				WHERE users.id = ?",array($id))->result_array();
+		}
+		
+		public function review($post) {
+			date_default_timezone_set("Asia/Manila");
+			$date = date("Y-m-d H:i:s");
+			$query = "INSERT INTO reviews (rating, comment, created_at, updated_at, product_id, user_id)
+						 VALUES(?,?,?,?,?,?)";
+			$values = array($post['rating'], $post['comment'], $date, $date, $post['product_id'], $post['user_id']);
+			return $this->db->query($query, $values);
+		}
+		public function get_review($id) {
+			return $this->db->query("SELECT reviews.rating, reviews.comment, reviews.created_at, 
+				reviews.product_id, CONCAT(users.fname,' ',users.lname)AS name 
+				FROM reviews LEFT JOIN users ON reviews.user_id = users.id
+				WHERE product_id = ?",array($id))->result_array();
+		}
+
+		public function get_avg_review($id) {
+			return $this->db->query("SELECT AVG(rating)as rating, COUNT(rating)as total
+			 FROM reviews WHERE product_id = ? GROUP BY product_id", array($id))->row_array();
+		}
+		/* to check if user input invalid name like numbers on their name  */
+		public function is_name_has_number($fname, $lname) {
+			$isValid = true;
+			$fname_valid = preg_match('/[0-9]/', $fname);
+			if ($fname_valid) {
+				$this->session->set_flashdata("msg","Invalid name");
+				$isValid = false;
+			}
+
+			$lname_valid = preg_match('/[0-9]/', $lname);
+			if ($lname_valid) {
+				$this->session->set_flashdata("msg","Invalid name");
+				$isValid = false;
+			}
+			return $isValid;
+		}
+
+		/*-----------------------------------------------------------------------------------------------------*/
+
+		/* check if the specific exist we can use this for signing up */
+		public function isExist($email) {
+			$query = $this->db->query("SELECT * from users WHERE email = ?",array($email));
+			return $query->num_rows();
+		}
+	}
+
+?>	

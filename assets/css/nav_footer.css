@@ -1,0 +1,94 @@
+
+#navbar{
+	background-color: white;
+	border-bottom: 1px solid #ccc;
+}
+#cart{
+	font-size: 25px;
+}
+.badge{
+	font-size: 10px;
+}
+.footer{
+	margin-top: 10px;
+	color: white;
+	font-size: 18px;
+	text-align: center;
+}
+.contacts{
+	background-color: #303841;
+	height: 70%;
+	padding-top: 50px;
+}
+.copyrights{
+	height: 30%;
+	padding-top: 15px;
+	background-color: #111213d4;
+}
+#footer-link{
+	color: white;
+	text-decoration: none;
+	display: inline-block;
+}
+#footer-ul, #footer-li{
+	display: inline;
+}
+#footer-li{
+	margin: 20px 0px 0px 20px; 
+}
+@media only screen and (max-width: 480px){
+	#nav-ul{
+		margin-left: 30px;
+	}
+	#nav-ul, li{
+		display: inline-block;
+	}
+	#reg-li, #login-li{
+		margin-left: 20px;
+	}
+	#form-search{
+		width: 90%;
+		margin: 20px 0px 0px 10px;
+	}
+	.footer{
+		height: 300px;
+	}	
+
+}
+
+@media only screen and (min-width: 481px){
+
+	#nav-ul{
+		margin-left: 65px;
+	}
+	#nav-ul, li{
+		display: inline-block;
+	}
+	#login-li, #reg-li{
+		margin-left: 20px;
+	}
+	#form-search{
+		width: 70%;
+		margin-left: 70px;
+	}
+	.footer{
+		height: 250px;
+	}	
+
+}
+@media only screen and (min-width: 1024px){
+
+	#nav-ul{
+		margin-left: 50px;
+	}
+	#login-li, #reg-li{
+		margin-left: 30px;
+	}
+	#form-search{
+		width: 50%;
+		margin-left: 150px;
+	}
+	.footer{
+		height: 200px;
+	}
+}	

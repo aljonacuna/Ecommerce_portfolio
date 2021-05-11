@@ -1,0 +1,151 @@
+*{
+	margin: 0px;
+	padding: 0px;
+}
+body{
+	background-color: #ddd;
+}
+#categories-title{
+	color: white;
+	width: 100%;
+	padding: 10px;
+}
+#side-div, #prod-list{
+	display: inline-block;
+	background-color: white;
+}
+
+#prod-list{
+	border: 1px solid #ccc;
+}
+
+#side-div{
+	border: 1px solid #ccc;
+	overflow-y: scroll;	
+}
+#category-li{
+	margin: 10px 0px 0px 20px;
+	font-size: 18px;
+}
+#top-paging, #prod-currentpage, #sort-lbl, #sort-list{
+	display: inline-block;
+}
+/*change here for responsive*/
+
+
+#sort-list{
+	width: 55%;
+}
+/*change here for responsive*/
+
+#prod-row{
+	margin-top: 20px;
+}
+#prod-img{
+	width: 90%;
+	height: 200px;
+}
+#bot-paging-ul{
+	padding: 20px 10px 20px 20px;
+}
+#bot-paging-link{
+	font-size: 16px;
+}
+
+#btn-category{
+	background: none;
+    border: none;
+    color: black;
+    cursor: pointer;
+}
+@media only screen and (max-width: 480px){
+	#prod-list, #side-div{
+		
+	}
+	#prod-list{
+		width: 85%;
+		margin: 30px 0px 0px 30px;
+	}
+	#side-div{
+		width: 50%;
+		height: 200px;
+		position: ;
+		margin: 30px 25% 0px 25%;
+	}
+	#top-paging{
+		margin-left: 50px;
+	}
+	#sort-form{
+		margin: 20px 0px 40px 10px;
+	}
+	#paging-bottom{
+		margin-left: 30px;
+	}
+	#card{
+		display: block;
+		margin: 20px 0px 0px 0px;
+		height: 300px;
+		overflow: hidden;
+	}		
+
+}
+
+
+@media only screen and (min-width: 481px){
+	#prod-list{
+		width: 86%;
+		margin: 30px 7% 30px 7%;
+		padding-top: 20px;
+	}
+	#side-div{
+		margin: 30px 15% 0px 15%;
+		width: 70%;
+		height: 400px;
+	}
+	#top-paging{
+		margin-left: 30px;
+	}
+	#sort-form{
+		margin: 20px 0px 40px 53px;
+	}
+	#paging-bottom{
+		margin-left: 30px;
+	}
+	#card{
+		display: inline-block;
+		margin: 10px 0px 0px 20px;
+		height: 300px;
+		overflow: hidden;
+	}	
+
+}
+@media only screen and (min-width: 1024px){
+	#prod-list, #side-div{
+		margin: 10px 0px 0px 10px;
+	}
+	#prod-list{
+		width: 83%;
+		margin-left: 5px;
+	}
+	#side-div{
+		width: 15%;
+		height: 400px;
+		vertical-align: top;
+	}
+	#top-paging{
+		margin-left: 460px;
+	}
+	#sort-form{
+		margin: 20px 0px 40px 600px;
+	}
+	#paging-bottom{
+		margin-left: 250px;
+	}
+	#card{
+		display: inline-block;
+		margin: 10px 0px 0px 50px;
+		height: 300px;
+		overflow: hidden;
+	}
+}	
+	

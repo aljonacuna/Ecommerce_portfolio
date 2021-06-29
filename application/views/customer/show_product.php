@@ -110,7 +110,7 @@
 		
 			</form>
 		</div>
-		<!-- similar items -->
+		<!-- similar item -->
 
 		<div class="container-fluid text-center" id="similar-items">
 			<h4>Similar Items</h4>

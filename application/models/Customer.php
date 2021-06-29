@@ -10,24 +10,7 @@
 		//start of getting all the products
 
 		public function get_all_products($start, $limit) {
-			if ($this->session->userdata("search") == FALSE) {
-				return $this->db->query("SELECT * from products limit $start, $limit")->result_array();
-			}
-			else {
-				$search = $this->session->userdata("search");
-				if (isset($search['category'])) {
-					return $this->db->query("SELECT products.name, products.id, products.image, products.category_id, products.price from products 
-							LEFT JOIN categories ON categories.id = products.category_id
-							WHERE categories.name = ? limit $start, $limit",array($search))->result_array();
-				}
-				else{
-					$search = $search['search'];
-					$search = "%".$search."%";
-					return $this->db->query("SELECT * from products
-											WHERE name LIKE ? limit $start, $limit",array($search))->result_array();
-				}
-				
-			}
+			return $this->product_query("getprod", $start, $limit)->result_array();
 		}
 
 		//end of getting all the products
@@ -47,19 +30,49 @@
 		//start count all the products
 
 		public function get_totprod_count() {
-			if ($this->session->userdata("search") == FALSE) {
-				return $this->db->query("SELECT * from products")->num_rows();
-			}
-			else {
-				$search = $this->session->userdata("search");
-				return $this->db->query("SELECT products.name, products.price from products 
-							LEFT JOIN categories ON categories.id = products.category_id
-							WHERE categories.name = ?" ,array($search))->num_rows();
-			}
+			return $this->product_query("count", 0, 9)->num_rows();
 		}
 
 		//end count all the products
 
+		public function product_query($tag, $start, $limit) {
+			$limit = ($tag == "count") ? "" : "LIMIT ".$start.", ".$limit;
+			if ($this->session->userdata("search") == FALSE) {
+				return $this->db->query("SELECT * from products $limit");
+			}
+			else {
+				$search = $this->session->userdata("search");
+				if (isset($search['category'])) {
+					return $this->db->query("SELECT products.name, products.id, products.image, products.category_id, products.price from products 
+							LEFT JOIN categories ON categories.id = products.category_id
+							WHERE categories.name = ? $limit", array($search));
+				}
+				else if (isset($search['sort'])) {
+					if ($search["sort"] == "most") {
+						return $this->db->query("SELECT products.name, products.id, products.image,
+								products.category_id, products.price
+								FROM products 
+								LEFT JOIN orders on products.id = orders.product_id
+								GROUP BY products.id
+								ORDER BY SUM(orders.quantity) DESC $limit");
+					}
+					else {
+						$order_by = ($search["sort"] == "high") ? "DESC" : "ASC";
+						return $this->db->query("SELECT * FROM products
+								ORDER BY price $order_by $limit");
+					}
+					
+				}
+				else{
+					$search = $search['search'];
+					$search = "%".$search."%";
+					return $this->db->query("SELECT * from products
+											WHERE name LIKE ? 
+											$limit", array($search));
+				}
+				
+			}
+		}
 		/*------------------------------------------------------------------------------------------------------*/
 
 		//start get user address
@@ -228,6 +241,7 @@
 		//end of saving the orders
 
 		/*-----------------------------------------------------------------------------------------------------*/
+	
 		//start of saving the user address
 
 		public function save_address($street, $town, $city, $zip) {

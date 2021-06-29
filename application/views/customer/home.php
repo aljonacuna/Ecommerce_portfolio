@@ -28,11 +28,16 @@
 					});
 					return false;
 				});
+				$(document).on("change", "#sort-form", function() {
+					$.post($(this).attr("action"), $(this).serialize(), function(res) {
+						$("#prod-list").html(res);
+					});
+					return false;
+				});	
 			});
 		</script>
 	</head>
 	<body>
-		
 		<?php 
 		if ($is_loggedin != "no") {
 			$user_info['info'] = $is_loggedin;

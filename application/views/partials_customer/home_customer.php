@@ -3,12 +3,15 @@
 <nav aria-label="Top pages" id="top-paging">
 	<?php $this->load->view("partials_customer/pages_btn.php"); ?>
 </nav>
-<form id="sort-form">
+<form id="sort-form" action="ajaxcustomers/sort_by" method="post">
 	<label id="sprt-lbl">Sorted by:</label>
-	<select class="form-select" aria-label="Default select example" id="sort-list">
-		<option selected>Most popular</option>
-		<option value="1">Lowest price</option>
-		<option value="2">Highest price</option>
+	<select class="form-select" aria-label="sort" id="sort-list" name="sort">
+		<option value="0" <?= ($sort_by != "most" || $sort_by != "low" || $sort_by != "high") ? "selected" : "" ?>>
+				---Choose to sort---
+		</option>
+		<option value="most" <?= ($sort_by == "most") ? "selected" : "" ?>>Most popular</option>
+		<option value="low" <?= ($sort_by == "low") ? "selected" : "" ?>>Lowest price</option>
+		<option value="high" <?= ($sort_by == "high") ? "selected" : "" ?>>Highest price</option>
 	</select>
 </form>
 

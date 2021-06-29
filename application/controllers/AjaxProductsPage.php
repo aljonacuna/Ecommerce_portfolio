@@ -40,7 +40,7 @@
 			}
 			$num_of_result = 3;
 			$rows = $this->Admin->prod_tot_num();
-			$num_of_page = (round($rows / $num_of_result) >= $page + 2) ? $page + 2 : round($rows / $num_of_result) ; 
+			$num_of_page = (round($rows / $num_of_result) + 1 >= $page + 2) ? $page + 2 : round($rows / $num_of_result) + 1; 
 			$start = ($page-1) * $num_of_result;
 			$data["msg"] = ($this->session->flashdata("msg") == TRUE) ? $this->session->flashdata("msg") : "";
             $data['links_end'] = $num_of_page;

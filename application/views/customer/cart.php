@@ -61,7 +61,7 @@
 						<td><?= $value['quantity'] ?></td>
 						<td><a href="" class="fa fa-pencil fs-5 ms-2 text-reset text-decoration-none"></a>
 							<a href="<?= base_url() ?>cancel_cart/<?= $key ?>" class="fa fa-trash fs-5 ms-2 text-reset text-decoration-none"></a></td>
-						<td>$<?= $value['tot_price'] ?></td>
+						<td>&#8369; <?= $value['tot_price'] ?></td>
 					</tr>
 
 		<?php   	$total_price+=$value['tot_price'];

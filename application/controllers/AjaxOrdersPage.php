@@ -47,7 +47,7 @@
 		
 			$num_of_result = 5;
 			$rows = $this->Admin->get_transactions_total_count();
-			$num_of_page = (round($rows / $num_of_result) >= $page + 2) ? $page + 2 : round($rows / $num_of_result) ; 
+			$num_of_page = (round($rows / $num_of_result) + 1 >= $page + 2) ? $page + 2 : round($rows / $num_of_result) + 1; 
 			$start = ($page-1) * $num_of_result;
 			// $data["msg"] = ($this->session->flashdata("msg_orders") == TRUE) ?
 			//  $this->session->flashdata("msg_orders") : "";

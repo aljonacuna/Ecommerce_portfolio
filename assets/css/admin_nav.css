@@ -1,9 +1,9 @@
 #navbar{
 	background-color: #9A0E2A;
 }
-#logoff-li{
-	margin-left: 900px;
-}
+	#logoff-li{
+		margin-left: 900px;
+	}
 @media only screen and (max-width: 480px){
 	#logoff-li{
 		margin-left: 0px;

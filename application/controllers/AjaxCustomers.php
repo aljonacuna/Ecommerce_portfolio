@@ -80,7 +80,7 @@
 			$sort = ($this->session->userdata("search") == TRUE) ? $this->session->userdata("search") : "";
 			$num_of_result = 9;
 			$rows = $this->Customer->get_totprod_count();
-			$num_of_page = (round($rows / $num_of_result) + 1 >= $page + 8) ? $page + 8 : round($rows / $num_of_result); 
+			$num_of_page = (round($rows / $num_of_result) + 1 >= $page + 8) ? $page + 8 : round($rows / $num_of_result) + 1; 
 			$start = ($page-1) * $num_of_result;
             $data['links_end'] = $num_of_page;
             $data['links_start'] = $page;

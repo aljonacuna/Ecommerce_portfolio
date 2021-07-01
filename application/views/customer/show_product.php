@@ -1,30 +1,22 @@
 <!DOCTYPE html>
-	<?php
-	function image_similar($image){
-		$img_explode = explode(",", $image);
-			$main_img = "";
-			foreach ($img_explode as  $value_image) {
-				if (substr($value_image, 0,5) == "main:") {
-					$main_img = substr($value_image, 5,strlen($value_image));
-				}
-			}
-			return $main_img;
-		}
-	?>
 	<html>
 	<head>
 		<title></title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width,initial-scale=1">
 		<link rel="stylesheet" type="text/css" href="<?= asset_url() ?>css/bootstrap.min.css">
-		<script type="text/javascript" src="<?= asset_url() ?>js/bootstrap.min.js"></script>
 		<link rel="stylesheet" type="text/css" href="<?= asset_url() ?>css/show_prod.css">
 		<link rel="stylesheet" type="text/css" href="<?= asset_url() ?>css/nav_footer.css">
 		<link rel="stylesheet" type="text/css" href="<?= asset_url() ?>css/scrollbar.css">
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="<?= asset_url() ?>css/slider.css">
+		<link rel="stylesheet" type="text/css" href="<?= asset_url() ?>css/lightslider.css">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.css">
+		<script type="text/javascript" src="<?= asset_url() ?>js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="<?= asset_url() ?>js/JQuery3.3.1.js"></script>
+		<script type="text/javascript" src="<?= asset_url() ?>js/lightslider.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.js"></script>
+<!-- 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
 		<script src="jquery.js"></script>
 		<script src="jquery.rateyo.js"></script>
 		<script type="text/javascript">
@@ -55,9 +47,14 @@
 	<body>	
 		<!-- navbar section -->
 		<?php
-			$data['orders'] = $orders;
-			$data['user_data'] = $info;
-			$this->load->view("partials_customer/navbar_main", $data); 
+			if ($is_loggedin != "no") {
+				$user_info['info'] = $is_loggedin;
+				$this->load->view("partials_customer/navbar_main",$user_info);  
+			}
+			else{
+				$this->load->view("partials_customer/navbar_guest");  
+			}
+		
 		?>
 		
 		<!-- product review section -->
@@ -67,6 +64,19 @@
 
 		<!-- product section -->
 		<div class="container-fluid" id="product-section">
+    		<ul id="gallery">
+		        <li data-thumb="<?= base_url()?>uploads/<?= $main_image ?>" id="list-img">
+		            <img src="<?= base_url()?>uploads/<?= $main_image ?>" align="Product" id="display-img"/>
+		        </li>
+	<?php 	foreach ($sub_images as $key => $value) { ?>
+				<li data-thumb="<?= base_url()?>uploads/<?= $value ?>" id="list-img">
+		            <img src="<?= base_url()?>uploads/<?= $value ?>" align="Product" id="display-img"/>
+		        </li>
+	<?php	} ?>
+		       
+      		</ul>
+		</div>
+		<!-- <div class="container-fluid" id="product-section">
 			<a href="<?= base_url() ?>home" id="back-btn" class="fa fa-arrow-left"></a>
 			<div class="card" style="width: 18rem;" id="card">
 				<div class="card-body">
@@ -80,7 +90,7 @@
 					?>
 				</div>
 			</div>
-		</div>
+		</div> -->
 		
 		<!-- product description section desc max length should be 300 character -->
 		<div class="container-fluid" id="prod-desc-section">
@@ -90,7 +100,7 @@
 			<div id="rateYo" data-rateyo-num-stars="5"></div>
 			<p><?= round($avg_reviews['rating']) ?> average based on <?= $avg_reviews['total'] ?> reviews.</p>
 			<form action="<?= base_url() ?>addtocart" method="post" id="add-cart-form">
-				<p id="price">Price: $<?= $product['price'] ?></p>
+				<p id="price">Price: &#8369;<?= $product['price'] ?></p>
 				<input type="hidden" name="id" value="<?= $product['id'] ?>">
 				<input type="hidden" name="category_id" value="<?= $product['category_id'] ?>">
 				<input type="hidden" name="prod_name" value="<?= $product['name'] ?>">
@@ -110,87 +120,43 @@
 		
 			</form>
 		</div>
+
 		<!-- similar item -->
+		<h4 id="similar-items-lbl">Similar items</h4>
+		<div class="container-fluid" id="slider-container">
 
-		<div class="container-fluid text-center" id="similar-items">
-			<h4>Similar Items</h4>
-			<div id="carouselExampleDark" class="carousel carousel-dark slide" data-bs-ride="carousel">
-	            <div class="carousel-inner">
-	                <div class="carousel-item active" data-bs-interval="10000">
-	        <?php  
-            	foreach ($similar_products as $key => $value) { 
-            		if ($key <= 3) { 
-            			$image = image_similar($value['image']);
-            			?>
-            			
-            			<div class="card d-inline-block" id="card-similar-items" >
-							<img src="<?= base_url()?>uploads/<?= $image ?>" alt="Similar Product" id="similar-prod-img">
-							<div class="card-footer">
-								<h5 id="price-similar-items"><?= $value['name'] ?></h5>
-								<p id="price-similar-items">$<?= $value['price'] ?></p>
-							</div>
+		<!--slider------------------->
+			<ul id="autoWidth" class="cs-hidden">
+<?php 
+foreach ($similar_products as $key => $value) {
+	$images = explode(",", $value['image']);
+	foreach ($images as $value_image) {
+		if (substr($value_image, 0, 5) == "main:") { 
+			$main_img = substr($value_image, 5,strlen($value_image));
+			?>
+				<li class="item-a">
+				  	<!--slider-box-->
+					<div class="box">
+						<!--model-->
+						<a href="<?= base_url() ?>showproduct/<?= $value['id'] ?>/<?= $value['category_id'] ?>"
+							id="similar-link">
+							<img src="<?= base_url() ?>/uploads/<?= $main_img ?>" class="model">
+						<!--details-->
+						</a>
+						<div class="details">
+							<p><?= $value['name'] ?></p>
+							<p>&#8369; <?= $value['price'] ?></p>
 						</div>
-          <?php   	}
-            		
-
-       		}    ?>
-	                </div>
-	               <?php 
-            	if (count($similar_products) > 4) { ?>
-            		<div class="carousel-item" data-bs-interval="20000">
-		         <?php  
-		        	foreach ($similar_products as $key => $value) { 
-		        		if ($key >= 4) { 
-		        			$image = image_similar($value['image']);
-		        			?>
-		        			
-		        			<div class="card d-inline-block" id="card-similar-items">
-								<img src="<?= base_url()?>uploads/<?= $image ?>" alt="Similar Product" id="similar-prod-img">
-								<div class="card-footer">
-									<h5 id="price-similar-items"><?= $value['name'] ?></h5>
-									<p id="price-similar-items">$<?= $value['price'] ?></p>
-								</div>
-							</div>
-		      <?php   	}          		
-		   			}    ?>
-		           	</div>
-        <?php    }
-            ?>
-         <?php 
-            	if (count($similar_products) > 8) { ?>
-            		<div class="carousel-item">
-		         <?php  
-		        	foreach ($similar_products as $key => $value) { 
-		        		if ($key >= 8) { 
-		        			$image = image_similar($value['image']);
-		        			?>
-		        			
-		        			<div class="card d-inline-block" id="card-similar-items">
-								<img src="<?= base_url()?>uploads/<?= $image ?>" alt="Similar Product" id="similar-prod-img">
-								<div class="card-footer">
-									<h5 id="price-similar-items"><?= $value['name'] ?></h5>
-									<p id="price-similar-items">$<?= $value['price'] ?></p>
-								</div>
-							</div>
-		      <?php   	}          		
-		   			}    ?>
-		           	</div>
-        <?php    }
-            ?>
-	              
-	            </div>
-	            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
-	            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-	            <span class="visually-hidden">Previous</span>
-	            </button>
-	            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
-	            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-	            <span class="visually-hidden">Next</span>
-	            </button>
-	        </div>
+					</div>
+				</li>
+		<?php		}
+				}
+			}
+		?>
+			</ul>
 		</div>
 
-		<div class="container-fluid bg-light w-75 mt-4">
+		<div class="container-fluid bg-light mt-4" id="customer-review-container">
 			<section class="container-fluid">
 				<p class="fs-5 fw-bolder">Customers Review</p>
 			</section>
@@ -209,5 +175,6 @@
 		</div>
 		<!-- footer section -->
 		<?php $this->load->view("partials_customer/footer_customer"); ?>
+		<script src="<?= asset_url() ?>js/script.js" type="text/javascript"></script>
 	</body>
 </html>							

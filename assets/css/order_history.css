@@ -7,32 +7,32 @@
 	width: 70%;
 	padding: 10px;
 }
-#prod-img{
-	width: 90%;
-	height: 200px;
-}
-#thumbnail-img{
-	width: 18%;
-	height: 50px;
-}
-#img-div, #details{
-	display: inline-block;
-}
-#img-div{
-	width: 30%;
-	vertical-align: top;
-}
-#details{
-	width: 60%;
-}
+	#prod-img{
+		width: 90%;
+		height: 200px;
+	}
+	#thumbnail-img{
+		width: 18%;
+		height: 50px;
+	}
+	#img-div, #details{
+		display: inline-block;
+	}
+	#img-div{
+		width: 30%;
+		vertical-align: top;
+	}
+	#details{
+		width: 60%;
+	}
 
-#rating-star{
-	text-decoration: none;
-	font-size: 20px;
-}
-.rates{
-	color: gold;
-}
+	#rating-star{
+		text-decoration: none;
+		font-size: 20px;
+	}
+	.rates{
+		color: gold;
+	}
 .comment{
 	height: 120px;
 }

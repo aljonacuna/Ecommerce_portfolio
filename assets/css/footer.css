@@ -4,24 +4,24 @@
 	font-size: 18px;
 	text-align: center;
 }
-.contacts{
-	background-color: #303841;
-	height: 70%;
-	padding-top: 50px;
-}
-.copyrights{
-	height: 30%;
-	padding-top: 15px;
-	background-color: #111213d4;
-}
-#footer-link{
-	color: white;
-	text-decoration: none;
-	display: inline-block;
-}
-#footer-ul, #footer-li{
-	display: inline;
-}
-#footer-li{
-	margin: 20px 0px 0px 20px; 
-}
+	.contacts{
+		background-color: #303841;
+		height: 70%;
+		padding-top: 50px;
+	}
+	.copyrights{
+		height: 30%;
+		padding-top: 15px;
+		background-color: #111213d4;
+	}
+	#footer-link{
+		color: white;
+		text-decoration: none;
+		display: inline-block;
+	}
+	#footer-ul, #footer-li{
+		display: inline;
+	}
+	#footer-li{
+		margin: 20px 0px 0px 20px; 
+	}

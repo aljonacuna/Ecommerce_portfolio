@@ -10,10 +10,28 @@ body{
 	background-color: white;
 
 }
+	table{
+		font-family: Arial, Helvetica, sans-serif;
+		background-color: white;
+	}
+	td{
+		text-align: center;
+	}
+	table,td,th{
+		padding: 10px;
+		text-align: center;
+	}
+	table tr:nth-child(2n+3){
+		background-color: #ddd;
+	}
 
 #shipping-billing-info{
 	background-color: white;
 }
+	#paynow-btn{
+		padding: 5px 20px 5px 20px;
+		margin: 30px 0px 30px 10px;
+	}	
 #total-price, #continue-shopping-link{
 	display: block;
 }
@@ -21,22 +39,6 @@ body{
 #total-price{
 	font-weight: 700;
 }
-table{
-	font-family: Arial, Helvetica, sans-serif;
-	background-color: white;
-
-}
-td{
-	text-align: center;
-}
-table,td,th{
-	padding: 10px;
-	text-align: center;
-}
-table tr:nth-child(2n+3){
-	background-color: #ddd;
-}
-
 
 label{
 	margin-top: 20px;
@@ -45,10 +47,7 @@ label{
 	width: 20%;
 	display: inline;
 }
-#paynow-btn{
-	padding: 5px 20px 5px 20px;
-	margin: 30px 0px 30px 10px;
-}
+
 
 @media only screen and (max-width: 480px){
 	#cart{

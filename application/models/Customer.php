@@ -82,7 +82,7 @@
 				 addresses.town, addresses_role.role, addresses.id FROM addresses
 				INNER JOIN addresses_role on addresses.id = addresses_role.address_id
 				INNER JOIN users on addresses_role.user_id = users.id
-				WHERE users.id = ?",array($id))->row_array();
+				WHERE users.id = ?",array($id))->result_array();
 		}
 
 		//end get user address
@@ -152,9 +152,12 @@
 						$values = array($email, $encrypt_pass, $salt, $fname, $lname, $user_role, $date, $date);
 						$result = $this->db->query($query, $values);
 						$id = $this->db->insert_id();
-						$query_addressrole = "INSERT INTO addresses_role (role, address_id, user_id) VALUES(?,?,?)";
-						$values_addressrole = array($user_role, $address_id, $id);
-						return $this->db->query($query_addressrole, $values_addressrole);
+						for($x = 0 ; $x < 2 ; $x++) {
+							$query_addressrole = "INSERT INTO addresses_role (role, address_id, user_id) 
+							VALUES(?,?,?)";
+							$values_addressrole = array($x, $address_id, $id);
+							$this->db->query($query_addressrole, $values_addressrole);
+						}
 					}
 					else {
 						$this->session->set_flashdata("msg_reg","email");

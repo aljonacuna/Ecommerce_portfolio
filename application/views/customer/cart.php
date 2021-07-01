@@ -12,22 +12,22 @@
 		<link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 		<script type="text/javascript">
-			$(document).ready(function() {
-				$(document).on("change", "#check-same-as-shipping", function() {
-					var fname = $("#fname").val();
-					$("#billing-fname").val(fname);
-					var lname = $("#lname").val();
-					$("#billing-lname").val(lname);
-					var street = $("#address").val();
-					$("#billing-address").val(street);
-					var city = $("#city").val();
-					$("#billing-city").val(city);
-					var town = $("#town").val();
-					$("#billing-town").val(town);
-					var zip = $("#zip").val();
-					$("#billing-zip").val(zip);
-				});
-			});
+			// $(document).ready(function() {
+			// 	$(document).on("change", "#check-same-as-shipping", function() {
+			// 		var fname = $("#fname").val();
+			// 		$("#billing-fname").val(fname);
+			// 		var lname = $("#lname").val();
+			// 		$("#billing-lname").val(lname);
+			// 		var street = $("#address").val();
+			// 		$("#billing-address").val(street);
+			// 		var city = $("#city").val();
+			// 		$("#billing-city").val(city);
+			// 		var town = $("#town").val();
+			// 		$("#billing-town").val(town);
+			// 		var zip = $("#zip").val();
+			// 		$("#billing-zip").val(zip);
+			// 	});
+			// });
 		</script>
 	</head>
 	<body>
@@ -108,18 +108,18 @@
 						<label for="lname">Last Name</label>
 						<input type="text" name="lname" class="form-control" id="lname" placeholder="Last Name"
 						value="<?= $user_info['lname'] ?>">
-						<label for="address">Address</label>
+						<label for="shipping_address">Address</label>
 						<input type="text" name="address" class="form-control" id="address" placeholder="Address"
-						value="<?= $address['street'] ?>">
+						value="<?= $shipping_address['street'] ?>">
 						<label for="city">City</label>
 						<input type="text" name="city" class="form-control" id="city" placeholder="City"
-						value="<?= $address['city'] ?>">
+						value="<?= $shipping_address['city'] ?>">
 						<label for="town">Town</label>
 						<input type="text" name="town" class="form-control" id="town" placeholder="Town"
-						value="<?= $address['town'] ?>">
+						value="<?= $shipping_address['town'] ?>">
 						<label for="zipcode">Zipcode</label>
 						<input type="text" name="zip" class="form-control" id="zip" placeholder="Zipcode"
-						value="<?= $address['zip'] ?>">
+						value="<?= $shipping_address['zip'] ?>">
 					</form>
 				</div>
 				<div class="tab-pane fade" id="billing" role="tabpanel" aria-labelledby="billing-tab">
@@ -131,17 +131,20 @@
 							</label>
 						</p>
 						<label for="fname">First Name</label>
-						<input type="text" name="fname" class="form-control" id="billing-fname" placeholder="First Name">
+						<input type="text" name="fname" class="form-control" id="billing-fname" placeholder="First Name" value="<?= $user_info['fname'] ?>">
 						<label for="lname">Last Name</label>
-						<input type="text" name="lname" class="form-control" id="billing-lname" placeholder="Last Name">
+						<input type="text" name="lname" class="form-control" id="billing-lname" placeholder="Last Name" value="<?= $user_info['lname'] ?>">
 						<label for="address">Address</label>
-						<input type="text" name="address" class="form-control" id="billing-address" placeholder="Address">
+						<input type="text" name="address" class="form-control" id="billing-address" placeholder="Address" value="<?= $billing_address['street'] ?>">
 						<label for="city">City</label>
-						<input type="text" name="city" class="form-control" id="billing-city" placeholder="City">
+						<input type="text" name="city" class="form-control" id="billing-city" placeholder="City"
+						value="<?= $billing_address['city'] ?>">
 						<label for="town">Town</label>
-						<input type="text" name="town" class="form-control" id="billing-town" placeholder="Town">
+						<input type="text" name="town" class="form-control" id="billing-town" placeholder="Town"
+						value="<?= $billing_address['town'] ?>">
 						<label for="zipcode">Zipcode</label>
-						<input type="text" name="zip" class="form-control" id="billing-zip" placeholder="Zipcode">
+						<input type="text" name="zip" class="form-control" id="billing-zip" placeholder="Zipcode"
+						value="<?= $billing_address['zip'] ?>">
 						<label for="card">Card</label>
 						<input type="text" name="card" class="form-control" placeholder="Card">
 						<label for="security">Security Code</label>

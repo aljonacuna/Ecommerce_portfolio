@@ -5,25 +5,26 @@
 body{
 	background-color: #ddd;
 }
-.error{
-	color: red;
-}
-#msg{
-	height: 60px;
-	width: 90%;
-	margin: 30px 5% 0px 5%;
-}
-#main-div{
-	margin-top: 20px;
-	margin-bottom: 40px;
-	background-color: white;
-	padding: 10px;
-}
 
-#reg-btn, #login-btn{
-	padding: 5px 20px 5px 20px;
-	margin: 20px 0px 0px 20px;
-}
+	#main-div{
+		margin-top: 20px;
+		margin-bottom: 40px;
+		background-color: white;
+		padding: 10px;
+	}
+		.error{
+			color: red;
+		}
+		#msg{
+			height: 60px;
+			width: 90%;
+			margin: 30px 5% 0px 5%;
+		}
+
+		#reg-btn, #login-btn{
+			padding: 5px 20px 5px 20px;
+			margin: 20px 0px 0px 20px;
+		}
 @media only screen and (max-width: 480px){
 	#main-div{
 		width: 90%;

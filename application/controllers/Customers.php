@@ -20,6 +20,8 @@
 			$data['similar_products'] = $this->Customer->get_similar_products($category_id);
 			$data['reviews'] = $this->Customer->get_review($prod_id);
 			$data['avg_reviews'] = $this->Customer->get_avg_review($prod_id);
+			$data['is_loggedin'] = ($this->Session->is_loggedin()) ? 
+			$this->Session->get_session_userdata() : "no";
 			foreach ($data['similar_products'] as $value) {
 				if ($prod_id == $value['id']) {
 					$data['product'] = array("id"=>$value['id'], 
@@ -87,7 +89,9 @@
 			if ($this->Session->is_loggedin()) {
 				$info = $this->Session->get_session_userdata();
 				$id = $info['id']; 
-				$data['address'] = $this->Customer->get_address($id);
+				$address = $this->Customer->get_address($id);
+				$data['shipping_address'] = $address[0];
+				$data['billing_address'] = $address[1];
 				$data['orders'] = ($this->Session->is_cartnotempty()) ? $this->Session->get_order_session() : "";
 				$data['user_info'] = $info;
 				$this->load->view("customer/cart",$data);
@@ -97,7 +101,6 @@
 			}
 			
 		}
-
 		public function checkout() {
 			date_default_timezone_set("Asia/Manila");
 			$date = date("Y-m-d H:i:s");

@@ -12,7 +12,7 @@
 		<link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 		<script type="text/javascript">
-			// $(document).ready(function() {
+			$(document).ready(function() {
 			// 	$(document).on("change", "#check-same-as-shipping", function() {
 			// 		var fname = $("#fname").val();
 			// 		$("#billing-fname").val(fname);
@@ -27,7 +27,7 @@
 			// 		var zip = $("#zip").val();
 			// 		$("#billing-zip").val(zip);
 			// 	});
-			// });
+			});
 		</script>
 	</head>
 	<body>

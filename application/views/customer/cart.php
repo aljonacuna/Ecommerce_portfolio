@@ -67,7 +67,6 @@
 		<?php   	$total_price+=$value['tot_price'];
 				}
 				?>
-				
 	<?php		
 			}
 		}	
@@ -160,8 +159,6 @@
 				</div>
 			</div>
 		</div>
-
-
 		<!-- footer section -->
 		<?php $this->load->view("partials_customer/footer_customer"); ?>
 	</body>

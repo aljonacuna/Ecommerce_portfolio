@@ -58,7 +58,7 @@
 		//start get quantity sold
 
 		public function get_quantitysold($prod_id) {
-			return $this->db->query("SELECT COUNT(orders.product_id)as quantity_sold, products.id FROM orders
+			return $this->db->query("SELECT SUM(orders.quantity)as quantity_sold, products.id, products.name FROM orders
 									LEFT JOIN products on products.id = orders.product_id
 									WHERE orders.product_id = ?", array($prod_id))->row_array();
 		}

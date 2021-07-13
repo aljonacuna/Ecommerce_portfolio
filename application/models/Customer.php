@@ -4,7 +4,6 @@
 		
 		public function __construct() {
 			parent::__construct();
-			
 		}
 
 		//start of getting all the products
@@ -79,13 +78,70 @@
 
 		public function get_address($id) {
 			return $this->db->query("SELECT addresses.street, addresses.city, addresses.zip,
-				 addresses.town, addresses_role.role, addresses.id FROM addresses
+				 addresses.town, addresses_role.role, addresses.id, addresses_role.id As role_id FROM addresses
 				INNER JOIN addresses_role on addresses.id = addresses_role.address_id
 				INNER JOIN users on addresses_role.user_id = users.id
-				WHERE users.id = ?",array($id))->result_array();
+				WHERE users.id = ?
+				ORDER BY addresses_role.id ASC", array($id))->result_array();
 		}
 
 		//end get user address
+
+		/*------------------------------------------------------------------------------------------------------*/
+
+		//start of saving the user address
+
+		public function save_address($street, $town, $city, $zip) {
+			$query_check = "SELECT id FROM addresses WHERE street = ?  && town = ? && city = ?";
+			if ($this->check_address($street, $city, $town, $query_check) > 0) {
+				return $this->db->query("SELECT id from addresses WHERE street = ?", array($street))->row_array();
+			}
+			else {
+				$query = "INSERT INTO addresses (street, city, zip, town) VALUES(?,?,?,?)";
+				$values = array($street, $city, $zip, $town);
+				$this->db->query($query, $values);
+				return $this->db->insert_id();
+			}
+		}
+
+		//end of saving the user address
+		/*-----------------------------------------------------------------------------------------------------*/
+
+		//edit billing address functionalities
+		public function check_address($street, $city, $town, $query) {
+			$values = array($street, $town, $city);
+			return $this->db->query($query, $values)->num_rows();
+		}
+
+		public function update_billing_address($post, $id) {
+			$query_check = "SELECT city FROM addresses WHERE street = ?  && town = ? && city = ?";
+			if ($this->check_address($post['street'], $post['city'], $post['town'], $query_check) > 0) {
+				$address_id = $this->db->query("SELECT id FROM addresses WHERE street = ?", array($post['street']))->row_array();
+				$result = $this->db->query("UPDATE addresses_role SET address_id = ? WHERE id = ?", 
+											array($address_id, $id));
+				if ($result == true) {
+					return true;
+				}
+				else {
+					return false;
+				}
+			}
+			else {
+				$query = "INSERT INTO addresses (street, city, town, zip) VALUES(?, ?, ?, ?)";
+				$values = array($post['street'], $post['city'], $post['town'], $post['zip']);
+				$result = $this->db->query($query, $values);
+				$address_id = $this->db->insert_id();
+				if ($result == true) {
+					$this->db->query("UPDATE addresses_role SET address_id = ? WHERE id = ?",
+										array($address_id, $id));
+					return true;
+				}
+				else {
+					return false;
+				}
+
+			}
+		}
 
 		/*------------------------------------------------------------------------------------------------------*/
 
@@ -220,23 +276,29 @@
 
 		//start of saving the orders
 
-		public function save_orders_transactions($address, $orders, $info) {
+		public function save_orders_transactions($shipping_address, $billing_address, $orders, $info) {
 			date_default_timezone_set("Asia/Manila");
 			$date = date("Y-m-d H:i:s");
 			$query_orders = "INSERT INTO  orders (quantity, total, created_at, updated_at, user_id, product_id,
 			transaction_id) VALUES(?,?,?,?,?,?,?)";
+			$query_deduct_qty = "UPDATE products SET quantity = quantity - ? WHERE id = ?";
 			$query_transaction = "INSERT INTO transactions (billing_id, shipping_id, status_id, created_at, updated_at)
 			 VALUES (?,?,?,?,?)";
-			$values_transaction = array($address['id'], $address['id'], 0, $date, $date);
+			$values_transaction = array($billing_address['id'], $shipping_address['id'], 0, $date, $date);
 			$result = $this->db->query($query_transaction, $values_transaction);
 			$id = $this->db->insert_id();
 			if ($result == TRUE) {
-				foreach ($orders as $value) {
+				foreach ($orders[$info['id']] as $value) {
 					$values = array($value['quantity'], $value['tot_price'], $date ,$date, 
 						$info['id'], $value['prod_id'], $id);
+					$values_deduct_qty = array($value['quantity'], $value['prod_id']);
 					$this->db->query($query_orders, $values);
+					$this->db->query($query_deduct_qty, $values_deduct_qty);
 				}
-				$this->session->unset_userdata("orders");
+				$orders = $this->session->userdata("orders");	
+				unset($orders[$info['id']]);	
+				$this->session->set_userdata("orders", $orders);
+			
 			}
 			
 		}
@@ -245,26 +307,24 @@
 
 		/*-----------------------------------------------------------------------------------------------------*/
 	
-		//start of saving the user address
-
-		public function save_address($street, $town, $city, $zip) {
-			$query = "INSERT INTO addresses (street, city, zip, town) VALUES(?,?,?,?)";
-			$values = array($street, $city, $zip, $town);
-			$this->db->query($query, $values);
-			return $this->db->insert_id();
-		}
-
-		//end of saving the user address
-		/*-----------------------------------------------------------------------------------------------------*/
+		
 
 		//orders history
-		public function order_history($id) {
-			return $this->db->query("SELECT products.image, products.name, products.description,
+		public function order_history($id, $status_id) {
+			$query = "SELECT products.image, products.name, products.description,
 				products.price, orders.product_id, orders.created_at, orders.quantity,
-				orders.total, orders.user_id FROM orders
+				orders.total, orders.user_id, transactions.status_id FROM orders
 				LEFT JOIN products ON orders.product_id = products.id
 				LEFT JOIN users ON orders.user_id = users.id
-				WHERE users.id = ?",array($id))->result_array();
+				LEFT JOIN transactions ON orders.transaction_id = transactions.id
+				WHERE users.id = ?";
+			if ($status_id == "") {
+				return $this->db->query($query, array($id))->result_array();
+			}
+			else {
+				return $this->db->query($query." && transactions.status_id = ?", array($id, $status_id))->result_array();
+			}
+			
 		}
 		
 		public function review($post) {
@@ -309,6 +369,10 @@
 		public function isExist($email) {
 			$query = $this->db->query("SELECT * from users WHERE email = ?",array($email));
 			return $query->num_rows();
+		}
+
+		public function get_email($id) {
+			return $this->db->query("SELECT email from users WHERE id = ?", array($id))->row_array();
 		}
 	}
 

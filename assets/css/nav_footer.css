@@ -50,6 +50,9 @@
 			width: 90%;
 			margin: 20px 0px 0px 10px;
 		}
+		#account-li, #order-history-li{
+			display: block;
+		}
 	.footer{
 		height: 300px;
 	}	
@@ -71,6 +74,9 @@
 			width: 70%;
 			margin-left: 70px;
 		}
+		#account-li, #order-history-li{
+			display: block;
+		}
 	.footer{
 		height: 250px;
 	}	
@@ -87,6 +93,9 @@
 		#form-search{
 			width: 50%;
 			margin-left: 150px;
+		}
+		#account-li, #order-history-li{
+			display: inline-block;
 		}
 	.footer{
 		height: 200px;

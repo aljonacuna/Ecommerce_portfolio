@@ -32,6 +32,18 @@
 			}
 		}
 
+		public function user_already_exist_in_cart($id) {
+			if($this->is_cartnotempty()) {
+				$orders = $this->get_order_session();
+				if (array_key_exists($id, $orders)) {
+					return true;
+				}
+				else {
+					return false;
+				}
+			}
+		}
+
 		public function isSearch_notempty() {
 			if ($this->session->userdata("search_orders") == TRUE) {
 				return true;

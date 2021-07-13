@@ -29,7 +29,7 @@ foreach ($products as $value) {
 	<a href="<?= base_url() ?>showproduct/<?= $value['id'] ?>/<?= $value['category_id'] ?>"><img src="<?= base_url()?>uploads/<?= $main_img ?>" class="card-img-top" alt="Product" id="prod-img"></a>
 	<div class="card-body">
 		<h5 class="card-title" id="prod-name"><?= $value['name'] ?></h5>
-		<p class="card-text" id="price">&#8369; <?= $value['price']?> </p>
+		<p class="card-text fs-6 fw-bold" id="price">&#8369; <?= $value['price']?> </p>
 	</div>
 </div>
 <?php	}

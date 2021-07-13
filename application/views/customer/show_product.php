@@ -25,6 +25,17 @@
 			   		rating: <?= round($avg_reviews['rating'])?>
 			  });
 
+				var option = {
+					animation: true,
+					delay: 10000
+				};
+				var addtocart = document.getElementById("add-to-cart-btn");
+				addtocart.addEventListener("click", function() {
+					var toast_div = document.getElementById("toast-msg");
+					var toast_msg = new bootstrap.Toast(toast_div, option);
+					toast_msg.show();
+				});
+
 			});
 			//for increasing and decreasing the quantity
 			var count = 0;
@@ -40,7 +51,7 @@
 			function tot_price() {
 				var qty = document.getElementById("quantity").value = count;
 				var tot = <?= $product['price'] ?> * qty;
-				document.getElementById("price").innerHTML = "Price: $"+tot;		
+				document.getElementById("price").innerHTML = "Price: &#8369;"+tot;		
 			}
 		</script>
 	</head>
@@ -49,6 +60,7 @@
 		<?php
 			if ($is_loggedin != "no") {
 				$user_info['info'] = $is_loggedin;
+				$user_info['name'] = $name;
 				$this->load->view("partials_customer/navbar_main",$user_info);  
 			}
 			else{
@@ -56,122 +68,125 @@
 			}
 		
 		?>
+		<!-- breadcrumb -->
+		<nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb" id="breadcrumb">
+			<ol class="breadcrumb px-2">
+				<li class="breadcrumb-item"><a class="text-warning" id="home-link" 
+					href="<?= base_url() ?>home" id="continue-shopping-link">Home</a></li>
+				<li class="breadcrumb-item active" aria-current="page"><label class="text-primary"><?= $product['name'] ?></label></li>
+			</ol>
+		</nav>
 		
 		<!-- product review section -->
-		<div class="container-fluid" id="review-div">
+		<!-- <div class="container-fluid" id="review-div">
 
-		</div>
-
-		<!-- product section -->
-		<div class="container-fluid" id="product-section">
-    		<ul id="gallery">
-		        <li data-thumb="<?= base_url()?>uploads/<?= $main_image ?>" id="list-img">
-		            <img src="<?= base_url()?>uploads/<?= $main_image ?>" align="Product" id="display-img"/>
-		        </li>
-	<?php 	foreach ($sub_images as $key => $value) { ?>
-				<li data-thumb="<?= base_url()?>uploads/<?= $value ?>" id="list-img">
-		            <img src="<?= base_url()?>uploads/<?= $value ?>" align="Product" id="display-img"/>
-		        </li>
-	<?php	} ?>
-		       
-      		</ul>
-		</div>
-		<!-- <div class="container-fluid" id="product-section">
-			<a href="<?= base_url() ?>home" id="back-btn" class="fa fa-arrow-left"></a>
-			<div class="card" style="width: 18rem;" id="card">
-				<div class="card-body">
-					<img src="<?= base_url()?>uploads/<?= $main_image ?>" align="Product" id="display-img">
-				</div>
-				<div class="card-footer">
-					<?php
-						foreach ($sub_images as  $value) { ?>
-							<img src="<?= base_url()?>uploads/<?= $value ?>" align="Product" id="other-prod-img">
-			<?php		}
-					?>
+		</div> -->
+		<div id="main">
+			<!-- product section -->
+			<div class="container-fluid" id="product-section">
+	    		<ul id="gallery">
+			        <li data-thumb="<?= base_url()?>uploads/<?= $main_image ?>" id="list-img">
+			            <img src="<?= base_url()?>uploads/<?= $main_image ?>" align="Product" id="display-img"/>
+			        </li>
+		<?php 	foreach ($sub_images as $key => $value) { ?>
+					<li data-thumb="<?= base_url()?>uploads/<?= $value ?>" id="list-img">
+			            <img src="<?= base_url()?>uploads/<?= $value ?>" align="Product" id="display-img"/>
+			        </li>
+		<?php	} ?>
+			       
+	      		</ul>
+			</div>
+			
+				<!-- Toast message -->
+			<div class="toast align-items-center position-absolute" role="alert" aria-live="assertive" aria-atomic="true"
+			id="toast-msg">
+				<div class="d-flex">
+					<div class="toast-body">
+						<p class="fs-5" id="text-toast">Add to cart successfully</p>
+						<i class="fa fa-check-square" id="icon-success" aria-hidden="true"></i>
+					</div>
 				</div>
 			</div>
-		</div> -->
-		
-		<!-- product description section desc max length should be 300 character -->
-		<div class="container-fluid" id="prod-desc-section">
-			<h4><?= $product['name'] ?></h4>
-			<p id="description-p"><?= $product['desc'] ?></p>
-			<span class="heading">Product Rating</span>
-			<div id="rateYo" data-rateyo-num-stars="5"></div>
-			<p><?= round($avg_reviews['rating']) ?> average based on <?= $avg_reviews['total'] ?> reviews.</p>
-			<form action="<?= base_url() ?>addtocart" method="post" id="add-cart-form">
-				<p id="price">Price: &#8369;<?= $product['price'] ?></p>
-				<input type="hidden" name="id" value="<?= $product['id'] ?>">
-				<input type="hidden" name="category_id" value="<?= $product['category_id'] ?>">
-				<input type="hidden" name="prod_name" value="<?= $product['name'] ?>">
-				<section id="qty-section">
-					<label id="lbl-quantity">Quantity: </label>
-					<div id="increment-btn" class="btn btn-primary" onclick="increase_price()">+</div>
-					<input type="text" name="quantity" class="form-control" id="quantity"
-					 placeholder="Quantity" value="1">
-					<div id="decrement-btn" class="btn btn-primary" onclick="decrease_price()">-</div>
-					<input type="submit" value="Add to cart" class="btn btn-success" id="add-to-cart-btn">
-				</section>
-			</form>
-		</div>
+			
+			<!-- product description section desc max length should be 300 character -->
+			<div class="container-fluid" id="prod-desc-section">
+				<h4><?= $product['name'] ?></h4>
+				<p id="description-p"><?= $product['desc'] ?></p>
+				<span class="fw-bolder heading">Product Rating</span>
+				<div id="rateYo" data-rateyo-num-stars="5"></div>
+				<p><?= round($avg_reviews['rating']) ?> average based on <?= $avg_reviews['total'] ?> reviews.</p>
+				<form action="<?= base_url() ?>addtocart" method="post" id="add-cart-form">
+					<p id="price">Price: &#8369;<?= $product['price'] ?></p>
+					<input type="hidden" name="id" value="<?= $product['id'] ?>">
+					<input type="hidden" name="category_id" value="<?= $product['category_id'] ?>">
+					<input type="hidden" name="prod_name" value="<?= $product['name'] ?>">
+					<input type="hidden" name="prod_img" value="<?= $main_image ?>" name="">
+					<section id="qty-section">
+						<label id="lbl-quantity" class="fw-bolder">Quantity: </label>
+						<div id="increment-btn" class="btn btn-primary" onclick="increase_price()">+</div>
+						<input type="text" name="quantity" class="form-control" id="quantity"
+						 placeholder="Quantity" value="1">
+						<div id="decrement-btn" class="btn btn-primary" onclick="decrease_price()">-</div>
+						<input type="submit" value="Add to cart" class="btn btn-success" id="add-to-cart-btn">
+						<p id="stock-count">Stocks: <?= $product['qty'] ?> piece/s</p>
+					</section>
+				</form>
+			</div>
 
-		<div>
-			<form>
-		
-			</form>
-		</div>
 
-		<!-- similar item -->
-		<h4 id="similar-items-lbl">Similar items</h4>
-		<div class="container-fluid" id="slider-container">
 
-		<!--slider------------------->
-			<ul id="autoWidth" class="cs-hidden">
-<?php 
-foreach ($similar_products as $key => $value) {
-	$images = explode(",", $value['image']);
-	foreach ($images as $value_image) {
-		if (substr($value_image, 0, 5) == "main:") { 
-			$main_img = substr($value_image, 5,strlen($value_image));
-			?>
-				<li class="item-a">
-				  	<!--slider-box-->
-					<div class="box">
-						<!--model-->
-						<a href="<?= base_url() ?>showproduct/<?= $value['id'] ?>/<?= $value['category_id'] ?>"
-							id="similar-link">
-							<img src="<?= base_url() ?>/uploads/<?= $main_img ?>" class="model">
-						<!--details-->
-						</a>
-						<div class="details">
-							<p><?= $value['name'] ?></p>
-							<p>&#8369; <?= $value['price'] ?></p>
+			<!-- similar item -->
+			<h4 id="similar-items-lbl">Similar items</h4>
+			<div class="container-fluid" id="slider-container">
+
+			<!--slider------------------->
+				<ul id="autoWidth" class="cs-hidden">
+	<?php 
+	foreach ($similar_products as $key => $value) {
+		$images = explode(",", $value['image']);
+		foreach ($images as $value_image) {
+			if (substr($value_image, 0, 5) == "main:") { 
+				$main_img = substr($value_image, 5,strlen($value_image));
+				?>
+					<li class="item-a">
+					  	<!--slider-box-->
+						<div class="box">
+							<!--model-->
+							<a href="<?= base_url() ?>showproduct/<?= $value['id'] ?>/<?= $value['category_id'] ?>"
+								id="similar-link">
+								<img src="<?= base_url() ?>/uploads/<?= $main_img ?>" class="model">
+							<!--details-->
+							</a>
+							<div class="details">
+								<p><?= $value['name'] ?></p>
+								<p>&#8369; <?= $value['price'] ?></p>
+							</div>
 						</div>
-					</div>
-				</li>
-		<?php		}
+					</li>
+			<?php		}
+					}
 				}
-			}
-		?>
-			</ul>
-		</div>
+			?>
+				</ul>
+			</div>
 
-		<div class="container-fluid bg-light mt-4" id="customer-review-container">
-			<section class="container-fluid">
-				<p class="fs-5 fw-bolder">Customers Review</p>
-			</section>
-	<?php
-		foreach ($reviews as $value) { ?>
-			<section id="customer-review" class="container-fluid mx-5">
-				<p class=" fw-bolder"><?= $value['name'] ?>
-				<span class="mx-5" id="user_rates">Rate <?= $value['rating'] ?></span></p>
-			
-				<p id="date"><?= $value['created_at'] ?></p>
-				<p class="d-inline-block"><?= $value['comment'] ?></p>
-			</section>
-<?php	}
-	?>
-			
+			<div class="container-fluid bg-light mt-4" id="customer-review-container">
+				<section class="container-fluid">
+					<p class="fs-5 fw-bolder">Customers Review</p>
+				</section>
+		<?php
+			foreach ($reviews as $value) { ?>
+				<section id="customer-review" class="container-fluid mx-5">
+					<p class=" fw-bolder"><?= $value['name'] ?>
+					<span class="mx-5" id="user_rates">Rate <?= $value['rating'] ?></span></p>
+				
+					<p id="date"><?= $value['created_at'] ?></p>
+					<p class="d-inline-block"><?= $value['comment'] ?></p>
+				</section>
+	<?php	}
+		?>
+				
+			</div>
 		</div>
 		<!-- footer section -->
 		<?php $this->load->view("partials_customer/footer_customer"); ?>

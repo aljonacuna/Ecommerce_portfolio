@@ -41,7 +41,8 @@
 		<?php 
 		if ($is_loggedin != "no") {
 			$user_info['info'] = $is_loggedin;
-			$this->load->view("partials_customer/nav_loggedin",$user_info);  
+			$user_info['name'] = $name;
+			$this->load->view("partials_customer/nav_loggedin", $user_info);  
 		}
 		else{
 			$this->load->view("customer/navbar_customer");  

@@ -19,26 +19,40 @@
 						<span class="badge bg-secondary">
 						<?php
 							$orders = $this->session->userdata('orders');
-							$user_orders = array();
-							foreach ($orders as $value) {
-								if ($value['user_id'] == $info['id']) {
+							if (array_key_exists($info['id'], $orders)) {
+								$user_orders = array();
+								foreach ($orders[$info['id']] as $value) {
 									array_push($user_orders, $value['prod_id']);
 								}
+								echo count($user_orders);
 							}
-							echo count($user_orders);
+							else {
+								echo 0;
+							}
 							 ?>
 						</span>
 				<?php 	} ?>
+				
 				
 		         	</a>
 		        </li>
 		       <li class="nav-item" id="order-history-li">
 	    			<a class="nav-link active nav-li" aria-current="page" href="<?= base_url() ?>customers/order_history">Purchase History</a>
 	        	</li>
-	    		<li class="nav-item" id="login-li">
-	    			<a class="nav-link active nav-li" aria-current="page" href="<?= base_url() ?>logoff">Logout</a>
-	        	</li>
-	      </ul>
-	    </div>
+	    		<li class="nav-item" id="account-li">
+					<ul class="navbar-nav">
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+							<?= $name ?>
+							</a>
+							<ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+								<li><a class="dropdown-item" href="<?= base_url() ?>myaccount">My Account</a></li>
+								<li><a class="dropdown-item" href="<?= base_url() ?>logoff">Log out</a></li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
 	</div>
 </nav>

@@ -40,9 +40,12 @@ body{
 	}
 	#card:hover{
 		transform-style: preserve-3d;
-		transform: scale(1.02);
+		transform: scale(1.05, 1.05);
 		transition: all ease 0.3s;
 	}
+		#price{
+			color: #f94810;
+		}
 	#prod-row{
 	margin-top: 20px;
 	}

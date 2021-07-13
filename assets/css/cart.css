@@ -5,11 +5,20 @@
 body{
 	background-color: #ddd;
 }
-#order-section{
-	border: 1px solid #ccc;
-	background-color: white;
-
-}
+	#msg-div{
+		padding: 18px 20px 0px 20px;
+	}
+	#breadcrumb{
+		background-color: white;
+		padding: 5px;
+	}
+	#home-link{
+		text-decoration: none;
+	}
+	#order-section{
+		border: 1px solid #ccc;
+		background-color: white;
+	}
 	table{
 		font-family: Arial, Helvetica, sans-serif;
 		background-color: white;
@@ -21,16 +30,16 @@ body{
 		padding: 10px;
 		text-align: center;
 	}
-	table tr:nth-child(2n+3){
-		background-color: #ddd;
-	}
 
 #shipping-billing-info{
 	background-color: white;
 }
-	#paynow-btn{
-		padding: 5px 20px 5px 20px;
-		margin: 30px 0px 30px 10px;
+	#paynow-btn, #payment-btn{
+		background-color: #f94810;
+		color: white;
+	}
+	#edit-billing{
+		cursor: pointer;
 	}	
 #total-price, #continue-shopping-link{
 	display: block;
@@ -39,51 +48,112 @@ body{
 #total-price{
 	font-weight: 700;
 }
-
+#tot-price-text{
+	color: #f94810;
+}
+#total-price-section{
+	background-color: white;
+}
 label{
 	margin-top: 20px;
 }
-#month, #year, #divider-p{
-	width: 20%;
-	display: inline;
+#payment-div{
+	background-color: white;
+	padding: 10px;		
 }
 
 
 @media only screen and (max-width: 480px){
-	#cart{
-		margin: 20px 0px 0px 130px;
-	}
 	#order-section{
 		width: 100%;
 		margin: 10px 0px 10px 0px;
 		height: 200px;
 		overflow: scroll;
 		padding: 0px;
+		font-size: 16px;
 	}
+	#empty-cart{
+		margin: 10px 0px 0px 0px;
+	}
+	#empty-cart-display{
+			text-align: center;
+			padding-bottom: 20px;
+			margin: 50px 0px 90px 0px;
+		}
+			#empty-cart-img{
+				margin: 20px 50px 0px 20px;
+				width: 15%;
+				height: 100px;
+			}
+			#empty-cart-lbl{
+				margin-top: 10px;
+				font-size: 16px;
+				color: #757474;
+			}
+			#shopping-link-div{
+				width: 100%;
+				margin: 10px 0px 20px 0px;
+			}
 	#shipping-billing-info{
-		margin: 40px 0px 70px 0px;
+		margin: 10px 0px 70px 0px;
 		width: 100%;
 		padding: 10px;
 	}
+	table{
+		width: 100%;
+		font-size: 12px;
+	}
+		#item{
+			width: 350px;
+		}
+		#display-img{
+			width: 45%;
+			height: 50px;
+		}
 	#total-price-section{
+		padding: 5px 20px 10px 30px;
 		margin: 10px 0px 0px 0px;
 		width: 100%;
 		
+	}	
+		#total-price-article{
+			text-align: end;
+		}
+		#total-price{
+			font-size: 16px;
+		}
+		#continue-shopping-link, #paynow-btn{
+			width: 70%;
+			margin: 15px 15% 0px 15%;
+			padding: 3px 0px 3px 0px;
+		}
+	#payment-div{
+		margin: 20px 10% 40px 10%;
+		width: 80%;
+		height: auto;
 	}
-	#total-price-article, #continue-shopping-article{
-		justify-content: flex-end;
-		display: flex;
-		margin-right: 5px;
-	}
-	table{
-		width: 100%;
-	}
-	#total-price{
-		font-size: 16px;
-	}
-	#continue-shopping-link{
-		width: 50%;
-	}
+		#month, #year, #divider-p{
+			width: 20%;
+			display: inline;
+		}
+		#payment-btn{
+			width: 100%;
+		}
+		#error{
+			font-size: 12px;
+		}
+		#line-left, #line-right, #or-lbl{
+			display: inline-block;
+		}
+		#line-left, #line-right{
+			border-top: 1px solid #ddd;
+			width: 30%;
+			height: 10px;
+			vertical-align: -20px;
+		}
+		#line-left{
+			margin-left: 20px;
+		}
 		
 }
 
@@ -94,40 +164,106 @@ label{
 }
 @media only screen and (min-width: 1024px){
 	#cart{
-		margin-left: 1110px;
+		margin-left: 700px;
 	}
 	#order-section{
 		width: 100%;
-		margin: 10px 10px 10px 10px;
+		margin: 10px 0px 0px 0px;
 		height: 400px;
 		padding: 10px;
 		overflow-y: scroll;
 	}
-	#main-div{
-		width: 40%;
-		margin: 10px 10px 10px 10px;
+	#main-div, #empty-cart{
+		width: 100%;
+		margin: 10px 0px 0px 0px;
 		vertical-align: top;
 	}
+		#empty-cart-display{
+			text-align: center;
+			padding-bottom: 20px;
+			margin: 50px 0px 90px 0px;
+		}
+			#empty-cart-img{
+				margin: 50px 50px 0px 0px;
+				width: 10%;
+				height: 100px;
+			}
+			#empty-cart-lbl{
+				margin-top: 10px;
+				font-size: 18px;
+				color: #757474;
+			}
+			#shopping-link-div{
+				width: 20%;
+				margin: 10px 35% 20px 37%;
+			}
 	#shipping-billing-info, #main-div{
-		display: inline-block;
+		display: block;
 	}
 	#shipping-billing-info{
-		margin: 20px 0px 70px 20px;
-		width: 50%;
+		margin: 20px 10% 70px 10%;
+		width: 80%;
 		padding: 20px;
 	}
-	#total-price-section{
-		margin: 10px 0px 0px 350px;
-		width: 90%;
-	}
 	table{
-		width: 80%;
+		width: 100%;
 	}
-	#total-price{
-		font-size: 18px;
+		#item{
+			width: 400px;
+		}
+		#display-img{
+			width: 20%;
+			height: 90px;
+		}
+
+	#total-price-section{
+		margin: 5px 0px 0px 0px;
+		width: 100%;
+		padding: 10px 110px 0px 30px;
 	}
-	#continue-shopping-link{
+		#total-price-article{
+			text-align: end;
+		}
+		#total-price{
+			font-size: 18px;
+		}
+		#continue-shopping-link{
+			width: 100%;
+			margin-left: 40px;
+		}
+		#paynow-btn{
+			margin: 25px 0px 30px 10px;
+		}
+		#paynow-article, #continue-shopping-article{
+			display: inline-block;
+		}
+	#payment-div{
+		margin: 10px 30% 40px 30%;
 		width: 40%;
+		height: auto;
 	}
+		#month, #year, #divider-p{
+			width: 20%;
+			display: inline;
+		}
+		#payment-btn{
+			width: 100%;
+		}
+		#error{
+			font-size: 16px;
+		}
+		#line-left, #line-right, #or-lbl{
+			display: inline-block;
+		}
+		#line-left, #line-right{
+			border-top: 1px solid #ddd;
+			width: 40%;
+			height: 10px;
+			vertical-align: -20px;
+		}
+		#line-left{
+			margin-left: 20px;
+		}
+
 }		
 

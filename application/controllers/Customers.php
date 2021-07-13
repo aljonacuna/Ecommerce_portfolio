@@ -1,4 +1,4 @@
-<?php
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
 	
 	class Customers extends CI_Controller {
 		
@@ -6,6 +6,7 @@
 			parent::__construct();
 			$this->load->model("Customer");
 			$this->load->model("Session");
+			$this->load->library('stripe_lib'); 
 		}
 		public function index() {
 			$this->home();
@@ -13,21 +14,24 @@
 
 		//get the products to dispaly on homepage
 		public function show_product($prod_id, $category_id) {
-			$data['orders'] = ($this->Session->is_cartnotempty()) ? 
-			$this->Session->get_order_session() : array();
+			// $this->session->unset_userdata('orders');
 			$data['info'] = ($this->Session->is_loggedin()) ?
 			$this->Session->get_session_userdata() : array();
+			$data['orders'] = ($this->Session->is_cartnotempty()) ? 
+			$this->Session->get_order_session() : array();
 			$data['similar_products'] = $this->Customer->get_similar_products($category_id);
 			$data['reviews'] = $this->Customer->get_review($prod_id);
 			$data['avg_reviews'] = $this->Customer->get_avg_review($prod_id);
 			$data['is_loggedin'] = ($this->Session->is_loggedin()) ? 
 			$this->Session->get_session_userdata() : "no";
+			$data['name'] = $this->user_name($data['info']);
 			foreach ($data['similar_products'] as $value) {
 				if ($prod_id == $value['id']) {
 					$data['product'] = array("id"=>$value['id'], 
 											"name"=>$value['name'], 
 											"price"=>$value['price'],
 											"category_id" =>$category_id,
+											"qty"=>$value['quantity'],
 											"desc"=>$value['description']);
 					$img_explode = explode(",", $value['image']);
 					$array_images = array();
@@ -46,35 +50,39 @@
 			$this->load->view("customer/show_product",$data);
 		}
 
-
-		//save to session the add to cart products
-		public function addtocart() {
+		public function cart() {
 			if ($this->Session->is_loggedin()) {
-				$user_data = $this->Session->get_session_userdata();
-				$input = $this->input->post();
-				$price = $this->Customer->get_price($input['id']);
-				$new_orders = array("prodname"=> $input['prod_name'],
-								"prod_id" => $input['id'],
-								"user_id" => $user_data['id'],
-								"price"=> $price['price'],
-								"quantity"=> $input['quantity'],
-								"tot_price"=> $price['price'] * $input['quantity']);
-
-				if ($this->Session->is_cartnotempty()) {
-					$orders = $this->Session->get_order_session();
-					array_push($orders, $new_orders);
-					$this->session->set_userdata("orders",$orders);
-				}
-				else {
-					$this->session->set_userdata("orders",array($new_orders));
-				}
-				redirect("customers/show_product/".$input['id']."/".$input['category_id']);
+				$info = $this->Session->get_session_userdata();
+				$id = $info['id']; 
+				$orders = ($this->Session->user_already_exist_in_cart($id)) ? $this->Session->get_order_session() : [$id => ""];
+				$address = $this->Customer->get_address($id);
+				$data['shipping_address'] = $address[0];
+				$data['billing_address'] = $address[1];
+				$data['is_loggedin'] = ($this->Session->is_loggedin()) ? 
+				$this->Session->get_session_userdata() : "no";
+				$data["cart"] = ($this->Session->user_already_exist_in_cart($id) && sizeof($orders[$id]) > 0) ? true : false;
+				$data['orders'] = $orders[$id];
+				$data['user_info'] = $info;
+				$data['name'] = $this->user_name($info);
+				$this->load->view("customer/cart", $data);
 			}
 			else{
-				redirect("customers/to_login_register");
+				$this->login_customer();
 			}
 			
 		}
+
+		public function order_history() {
+			$data['is_loggedin'] = ($this->Session->is_loggedin()) ? 
+			$this->Session->get_session_userdata() : "no";
+			$data['orders'] = ($this->Session->is_cartnotempty()) ? 
+			$this->Session->get_order_session() : array();
+			$data['info'] = ($this->Session->is_loggedin()) ?
+			$this->Session->get_session_userdata() : array();
+			$data['name'] = $this->user_name($data['info']);
+			$this->load->view("customer/order_history", $data);
+		}
+	
 
 		//loading the view of home page
 		public function home() {
@@ -82,36 +90,11 @@
 			//to check if guest or logged in user if user currently logged in i will pass the users info
 			$data['is_loggedin'] = ($this->Session->is_loggedin()) ? 
 			$this->Session->get_session_userdata(): "no";
+			$info = ($this->Session->is_loggedin()) ?
+			$this->Session->get_session_userdata() : array();
+			$data['name'] = $this->user_name($info);
 			$this->load->view("customer/home", $data);
 		}
-		//redirect to cart function
-		public function cart() {
-			if ($this->Session->is_loggedin()) {
-				$info = $this->Session->get_session_userdata();
-				$id = $info['id']; 
-				$address = $this->Customer->get_address($id);
-				$data['shipping_address'] = $address[0];
-				$data['billing_address'] = $address[1];
-				$data['orders'] = ($this->Session->is_cartnotempty()) ? $this->Session->get_order_session() : "";
-				$data['user_info'] = $info;
-				$this->load->view("customer/cart",$data);
-			}
-			else{
-				$this->login_customer();
-			}
-			
-		}
-		public function checkout() {
-			date_default_timezone_set("Asia/Manila");
-			$date = date("Y-m-d H:i:s");
-			$info = $this->Session->get_session_userdata();
-			$id = $info['id']; 
-			$address = $this->Customer->get_address($id);
-			$orders= $this->Session->get_order_session();
-			$this->Customer->save_orders_transactions($address, $orders, $info);
-			redirect("customers/cart");
-		}
-
 		
 		//register method of users
 		public function register_customer() {
@@ -159,29 +142,25 @@
 			$this->session->flashdata("msg_login") : "";
 			$this->load->view("customer/registration_login",$msg_and_active);
 		}
-		public function delete_cart_items($key) {
-			$arr = $this->session->userdata("orders");
-			unset($arr[$key]);
-			$this->session->set_userdata("orders",$arr);
-			$this->cart();
 
-		}
-		public function order_history() {
-			$data['orders'] = ($this->Session->is_cartnotempty()) ? 
-			$this->Session->get_order_session() : array();
-			$data['info'] = ($this->Session->is_loggedin()) ?
+		public function myaccount() {
+			$info = ($this->Session->is_loggedin()) ?
 			$this->Session->get_session_userdata() : array();
-			$data['order_history'] = $this->Customer->order_history($data['info']['id']);
-			$this->load->view("customer/order_history",$data);
+			$data['is_loggedin'] = $info;
+			$data['name'] = $this->user_name($info);
+			$this->load->view("customer/myaccount", $data);
 		}
-		public function review() {
-			$input = $this->input->post();
-			$result = $this->Customer->review($input);
-			redirect("customers/order_history");
+
+		public function user_name($info) {
+			$name = (sizeof($info) > 0) ? $info['fname']." ".$info['lname'] : "";
+			if (strlen($name) > 12) {
+				return substr($name, 0, 12)."..";
+			}
+			else {
+				return $name;
+			}
 		}
+		
 	}
-
-
-
 
 ?>

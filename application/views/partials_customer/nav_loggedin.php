@@ -20,11 +20,11 @@
 						<?php
 							$orders = $this->session->userdata('orders');
 							if (array_key_exists($info['id'], $orders)) {
-								$user_orders = array();
+								$count = 0;
 								foreach ($orders[$info['id']] as $value) {
-									array_push($user_orders, $value['prod_id']);
+									$count = $count + $value['quantity'];
 								}
-								echo count($user_orders);
+								echo $count;
 							}
 							else {
 								echo 0;

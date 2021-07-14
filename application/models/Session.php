@@ -42,6 +42,9 @@
 					return false;
 				}
 			}
+			else {
+				return false;
+			}
 		}
 
 		public function isSearch_notempty() {

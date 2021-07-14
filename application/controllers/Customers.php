@@ -14,17 +14,19 @@
 
 		//get the products to dispaly on homepage
 		public function show_product($prod_id, $category_id) {
-			// $this->session->unset_userdata('orders');
-			$data['info'] = ($this->Session->is_loggedin()) ?
-			$this->Session->get_session_userdata() : array();
-			$data['orders'] = ($this->Session->is_cartnotempty()) ? 
-			$this->Session->get_order_session() : array();
+			if($this->Session->is_loggedin()) {
+				// $this->session->unset_userdata('orders');
+				$qty = 0;
+				$data['info'] = $this->Session->get_session_userdata();
+				$id = $data['info']['id'];
+			}
+			else {
+				$data['orders'] = array();
+				$data['info'] = array();
+			}
 			$data['similar_products'] = $this->Customer->get_similar_products($category_id);
 			$data['reviews'] = $this->Customer->get_review($prod_id);
 			$data['avg_reviews'] = $this->Customer->get_avg_review($prod_id);
-			$data['is_loggedin'] = ($this->Session->is_loggedin()) ? 
-			$this->Session->get_session_userdata() : "no";
-			$data['name'] = $this->user_name($data['info']);
 			foreach ($data['similar_products'] as $value) {
 				if ($prod_id == $value['id']) {
 					$data['product'] = array("id"=>$value['id'], 
@@ -53,14 +55,15 @@
 		public function cart() {
 			if ($this->Session->is_loggedin()) {
 				$info = $this->Session->get_session_userdata();
-				$id = $info['id']; 
-				$orders = ($this->Session->user_already_exist_in_cart($id)) ? $this->Session->get_order_session() : [$id => ""];
+				$id = $info['id'];
+				$orders = ($this->Session->user_already_exist_in_cart($id)) ? $this->Session->get_order_session()
+				 : [$id => "null"];
 				$address = $this->Customer->get_address($id);
 				$data['shipping_address'] = $address[0];
 				$data['billing_address'] = $address[1];
 				$data['is_loggedin'] = ($this->Session->is_loggedin()) ? 
 				$this->Session->get_session_userdata() : "no";
-				$data["cart"] = ($this->Session->user_already_exist_in_cart($id) && sizeof($orders[$id]) > 0) ? true : false;
+				$data["cart"] = ($this->Session->user_already_exist_in_cart($id) && $orders[$id] != "null") ? true : false;
 				$data['orders'] = $orders[$id];
 				$data['user_info'] = $info;
 				$data['name'] = $this->user_name($info);

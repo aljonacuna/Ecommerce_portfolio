@@ -8,22 +8,6 @@
 	    	<ul class="navbar-nav me-auto mb-2 mb-lg-0" id="nav-ul">
 	    		<li class="nav-item nav-li" id="cart">
 		         	<a class="nav-link active nav-li fa fa-shopping-cart" href="<?= base_url() ?>cart">
-		         		
-				<?php  if ($this->session->userdata('orders') == TRUE){ ?>
-						<span class="badge bg-secondary">
-						<?php
-							$orders = $this->session->userdata('orders');
-							$user_orders = array();
-							foreach ($orders as $value) {
-								if ($value['user_id'] == $info['id']) {
-									array_push($user_orders, $value['prod_id']);
-								}
-							}
-							echo count($user_orders);
-							 ?>
-						</span>
-				<?php 	} ?>
-				
 		         	</a>
 		        </li>
 		      

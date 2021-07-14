@@ -14,9 +14,7 @@
 	    	<ul class="navbar-nav me-auto mb-2 mb-lg-0" id="nav-ul">
 	    		<li class="nav-item nav-li" id="cart">
 		         	<a class="nav-link active nav-li fa fa-shopping-cart" href="<?= base_url() ?>cart">
-		         		<span class="badge bg-secondary">
-					<?= ($this->session->userdata('orders') == TRUE) ? 
-					count($this->session->userdata('orders')) : "0" ?></span>
+		         	<!-- 	<span class="badge bg-secondary"></span> -->
 		         	</a>
 		        </li>
 	    		<li class="nav-item" id="login-li">

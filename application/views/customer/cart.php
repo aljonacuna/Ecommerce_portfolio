@@ -66,7 +66,7 @@
 		<!-- list of order section -->
 		<div class="container-fluid" id="main">
 			<?php
-				if ($orders == "" || sizeof($orders) == 0) { ?>
+				if ($orders == "" || $orders == "null" || sizeof($orders) == 0) { ?>
 					<div class="container-fluid" id="empty-cart">
 						<div id="empty-cart-display">
 							<img src="<?= asset_url() ?>img/empty-cart.png" id="empty-cart-img">

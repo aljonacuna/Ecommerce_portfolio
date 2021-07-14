@@ -5,6 +5,7 @@
 	      <span class="navbar-toggler-icon"></span>
 	    </button>
 	    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+	    	<input type="hidden" name="cart_qty" value="<?= $cart_qty ?>" id="cart_qty">
 	    	<ul class="navbar-nav me-auto mb-2 mb-lg-0" id="nav-ul">
 	    		<li class="nav-item nav-li" id="cart">
 		         	<a class="nav-link active nav-li fa fa-shopping-cart" href="<?= base_url() ?>cart">
@@ -14,11 +15,12 @@
 						<?php
 							$orders = $this->session->userdata('orders');
 							if (array_key_exists($info['id'], $orders)) {
-								$user_orders = array();
+								// $user_orders = array();
+								$count = 0;
 								foreach ($orders[$info['id']] as $value) {
-									array_push($user_orders, $value['prod_id']);
+									$count = $count + $value['quantity'];
 								}
-								echo count($user_orders);
+								echo $count;
 							}
 							else {
 								echo 0;

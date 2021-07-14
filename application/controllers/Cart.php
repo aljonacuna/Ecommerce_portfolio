@@ -16,28 +16,33 @@
 				$user_data = $this->Session->get_session_userdata();
 				$input = $this->input->post();
 				$price = $this->Customer->get_price($input['id']);
-				$this->session->set_userdata("user_cart", $is_user_cart_empty);
 				$orders = $this->Session->get_order_session();
-				if ($orders[$user_data['id']] > 0) {
-					//if user already put an item on cart do this
-					$is_exist = $this->check_product($input, $orders, $user_data['id'], $price['price']);
-					if (!$is_exist) {
-						$new_orders[$user_data['id']] = $this->list_of_orders($input, $price, $user_data);
-						array_push($orders[$user_data['id']], $new_orders[$user_data['id']]);
-						$this->session->set_userdata("orders", $orders);
+				if (isset($orders[$user_data['id']])) {
+					$qty_exceed = $this->check_quantity($input, $orders[$user_data['id']]);
+					if ($qty_exceed == true) {
+						//if user already put an item on cart do this
+						$is_exist = $this->check_product($input, $orders, $user_data['id'], $price['price']);
+						if (!$is_exist) {
+							$new_orders[$user_data['id']] = $this->list_of_orders($input, $price, $user_data);
+							array_push($orders[$user_data['id']], $new_orders[$user_data['id']]);
+							$this->session->set_userdata("orders", $orders);
+						}
+						else {			
+							//do nothing
+						}
 					}
-					else {			
-						//do nothing
+					else {
+						$this->session->set_flashdata("failed", "Unable to add this item to cart quantity exceed the limit");
 					}
-				
+					
 				}
 				//if cart is empty do this
 				else {
 					$new_orders = $this->list_of_orders($input, $price, $user_data);
 					$orders[$user_data['id']][0] = $new_orders;
 					$this->session->set_userdata("orders", $orders);
-				}
-				redirect("customers/show_product/".$input['id']."/".$input['category_id']);
+				}					
+				$this->load_nav($input['id']);
 			}
 			else{
 				redirect("customers/to_login_register");
@@ -59,7 +64,6 @@
 		public function check_product($input, $cart, $user_id, $price) {
 			$exist = false;
 			foreach ($cart[$user_id] as $key => $value) {
-				echo $value['prod_id'].$input['id'];
 				if ($input['id'] == $value['prod_id']) {
 					$cart[$user_id][$key]['quantity'] = $cart[$user_id][$key]['quantity'] + $input['quantity'];
 					$cart[$user_id][$key]['tot_price'] =  $price * $cart[$user_id][$key]['quantity'];
@@ -73,6 +77,17 @@
 			return $exist;
 		}
 
+		public function check_quantity($input, $cart) {
+			foreach ($cart as $key => $value) {
+				if ($input['qty'] >= $value['quantity'] + $input['quantity']) {
+					return true;
+				}
+				else {
+					return false;
+				}
+			}
+
+		}
 		public function checkout() {
 			$tot_amount = 0;
 			$user_data = $this->Session->get_session_userdata();
@@ -143,10 +158,50 @@
 		}
 		public function delete_cart_items($key) {
 			$user_data = $this->Session->get_session_userdata();
+			$id = $user_data['id'];
 			$arr = $this->session->userdata("orders");
-			unset($arr[$user_data['id']][$key]);
+			if (sizeof($arr[$id]) > 1) {
+				unset($arr[$id][$key]);
+			}
+			else {
+				unset($arr[$id]);
+			}	
 			$this->session->set_userdata("orders", $arr);
 			redirect("customers/cart");
+		}
+
+		public function load_nav($prod_id) {
+			if ($this->Session->is_loggedin()) {
+				$user_info['info'] = $this->Session->get_session_userdata();
+				$user_info['name'] = $this->user_name($user_info['info']);
+				$id = $user_info['info']['id'];
+				$qty = 0;
+				$orders = ($this->Session->user_already_exist_in_cart($id)) ? $this->Session->get_order_session() : [$id => "null"];
+				if ($orders[$id] != "null") {
+					foreach ($orders[$id] as $key => $value) {
+						if ($value['prod_id'] == $prod_id) {
+							$qty = $value['quantity'];
+						}
+						else {
+							$qty = 0;
+						}
+					}
+				}
+				$user_info['cart_qty'] = $qty;
+				$this->load->view("partials_customer/navbar_main", $user_info);  
+			}
+			else{
+				$this->load->view("partials_customer/navbar_guest");  
+			}
+		}
+		public function user_name($info) {
+			$name = (sizeof($info) > 0) ? $info['fname']." ".$info['lname'] : "";
+			if (strlen($name) > 12) {
+				return substr($name, 0, 12)."..";
+			}
+			else {
+				return $name;
+			}
 		}
 	}
 

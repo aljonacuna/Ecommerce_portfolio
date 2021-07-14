@@ -21,53 +21,100 @@
 		<script src="jquery.rateyo.js"></script>
 		<script type="text/javascript">
 			$(document).ready(function() {
+				var addtocart = document.getElementById("add-to-cart-btn");
+				//for increasing and decreasing the quantity
+				var count = 1;
+				var qty_btn = document.querySelectorAll("div[data=qty-btn]");
+				var stocks = document.getElementById("qty").value;
 				$("#rateYo").rateYo({
 			   		rating: <?= round($avg_reviews['rating'])?>
-			  });
+			  	});
 
 				var option = {
 					animation: true,
-					delay: 10000
+					delay: 5000
 				};
-				var addtocart = document.getElementById("add-to-cart-btn");
+				$.get("<?= base_url() ?>cart/load_nav/<?= $product['id'] ?>", function(res) {
+					$("#nav").html(res);
+				});
+				$("#add-cart-form").submit(function() {
+					if (parseInt(qty_cart()) + parseInt(qty_order(count)) <= parseInt(stocks)) {
+						$.post($(this).attr("action"), $(this).serialize(), function(res) {
+							$("#nav").html(res);
+						});
+					}
+					else {
+
+					}
+					return false;
+				});
+				for (var i = 0 ; i < qty_btn.length ; i++) {
+					qty_btn[i].addEventListener("click", function() {
+						var id = this.id;
+						if (id == "increment-btn") {
+							increase_price();
+						}
+						else if(id == "decrement-btn"){
+							decrease_price();
+						}
+						else {
+
+						}
+					});
+				}
+				function qty_cart() {
+					var qty = document.getElementById("cart_qty").value;
+					return qty;
+				}
+				function qty_order(value) {
+					var qty_order = document.getElementById("quantity").value = value;
+					return qty_order;
+				}
+				function increase_price() {
+					// document.getElementById("quantity").value = count+=1;
+					qty_order(count+=1);
+					tot_price();	
+				}
+				function decrease_price() {
+					var qty = qty_order(count);
+					count = (qty > 1) ? count-=1 : 1;
+					tot_price();
+				}
+				function tot_price() {
+					var qty = qty_order(count);
+					var tot = <?= $product['price'] ?> * qty;
+					document.getElementById("price").innerHTML = "Price: &#8369;"+tot;		
+				}
+				
 				addtocart.addEventListener("click", function() {
+					var text_toast = document.getElementById("text-toast");
+					var icon_toast = document.querySelector("#icon-success");
 					var toast_div = document.getElementById("toast-msg");
+					if (parseInt(qty_cart()) + parseInt(qty_order(count)) <= parseInt(stocks)) {
+						
+					}
+					else {
+						toast_div.style.background = "#af1105";
+						toast_div.style.height = "200px";
+						icon_toast.classList.remove("fa-check-circle");
+						icon_toast.classList.add("fa-exclamation-circle");
+						text_toast.style.fontSize = "20px";
+						text_toast.innerText = "Error: There are only "+<?= $product['qty']?>+" item/s left in the stocks";
+					}
+					
 					var toast_msg = new bootstrap.Toast(toast_div, option);
 					toast_msg.show();
 				});
 
 			});
-			//for increasing and decreasing the quantity
-			var count = 0;
-			function increase_price() {
-				var qty = document.getElementById("quantity").value = count+=1;
-				tot_price();	
-			}
-			function decrease_price() {
-				var qty = document.getElementById("quantity").value;
-				count = (qty > 1) ?count-=1 : 1;
-				tot_price();
-			}
-			function tot_price() {
-				var qty = document.getElementById("quantity").value = count;
-				var tot = <?= $product['price'] ?> * qty;
-				document.getElementById("price").innerHTML = "Price: &#8369;"+tot;		
-			}
+			
 		</script>
 	</head>
 	<body>	
 		<!-- navbar section -->
-		<?php
-			if ($is_loggedin != "no") {
-				$user_info['info'] = $is_loggedin;
-				$user_info['name'] = $name;
-				$this->load->view("partials_customer/navbar_main",$user_info);  
-			}
-			else{
-				$this->load->view("partials_customer/navbar_guest");  
-			}
-		
-		?>
+		<div id=nav>
+			
+		</div>
 		<!-- breadcrumb -->
 		<nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb" id="breadcrumb">
 			<ol class="breadcrumb px-2">
@@ -97,13 +144,13 @@
 	      		</ul>
 			</div>
 			
-				<!-- Toast message -->
+			<!-- Toast message -->
 			<div class="toast align-items-center position-absolute" role="alert" aria-live="assertive" aria-atomic="true"
 			id="toast-msg">
 				<div class="d-flex">
 					<div class="toast-body">
-						<p class="fs-5" id="text-toast">Add to cart successfully</p>
-						<i class="fa fa-check-square" id="icon-success" aria-hidden="true"></i>
+						<p class="fw-bolder" id="text-toast">Add to cart successfully</p>
+						<i class="fa fa-check-circle" id="icon-success" aria-hidden="true"></i>
 					</div>
 				</div>
 			</div>
@@ -121,12 +168,13 @@
 					<input type="hidden" name="category_id" value="<?= $product['category_id'] ?>">
 					<input type="hidden" name="prod_name" value="<?= $product['name'] ?>">
 					<input type="hidden" name="prod_img" value="<?= $main_image ?>" name="">
+					<input type="hidden" name="qty" value="<?= $product['qty'] ?>" id="qty">
 					<section id="qty-section">
 						<label id="lbl-quantity" class="fw-bolder">Quantity: </label>
-						<div id="increment-btn" class="btn btn-primary" onclick="increase_price()">+</div>
+						<div id="increment-btn" class="btn btn-primary" data="qty-btn">+</div>
 						<input type="text" name="quantity" class="form-control" id="quantity"
 						 placeholder="Quantity" value="1">
-						<div id="decrement-btn" class="btn btn-primary" onclick="decrease_price()">-</div>
+						<div id="decrement-btn" class="btn btn-primary" data="qty-btn">-</div>
 						<input type="submit" value="Add to cart" class="btn btn-success" id="add-to-cart-btn">
 						<p id="stock-count">Stocks: <?= $product['qty'] ?> piece/s</p>
 					</section>

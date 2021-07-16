@@ -46,7 +46,7 @@
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 					</div>
 					<div class="modal-body">
-						<form action="<?= base_url()?>edit_billing/<?= $billing_address['role_id'] ?>" method="post">
+						<form action="edit_billing/<?= $billing_address['role_id'] ?>" method="post">
 							<label>Street: </label>
 							<input type="text" name="street" placeholder="Street" class="form-control">
 							<label>City: </label>
@@ -122,9 +122,9 @@
 						<h3>Billing Information</h3>
 						<form>
 							<p>
-								<a class="fa fa-pencil-square-o fs-6 link-primary text-decoration-none" 
+								<a class="fs-6 link-primary text-decoration-none" 
 								id="edit-billing" data-bs-toggle="modal" 
-								data-bs-target="#billing_modal"> Edit billing address</a>
+								data-bs-target="#billing_modal"> <i class="fa fa-pencil-square-o fs-6 " ></i>Edit billing address</a>
 							</p>
 							<label for="fname">First Name</label>
 							<input type="text" name="fname" class="form-control" id="billing-fname" placeholder="First Name" value="<?= $user_info['fname'] ?>" disabled="true">

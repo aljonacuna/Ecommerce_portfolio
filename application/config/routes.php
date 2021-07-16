@@ -70,7 +70,7 @@ $route['to_login'] = "customers/login_customer";
 $route['cancel_cart/(:any)'] = "cart/delete_cart_items/$1";
 $route['checkout'] = "cart/checkout";
 $route['review'] = "cart/review";
-$route["edit_billing/(:any)"] = "customers/edit_billing_address/$1";
+$route["edit_billing/(:any)"] = "cart/edit_billing_address/$1";
 $route['handlePayment'] = "cart/handlePayment";
 //switch
 // $route['switchpage'] = "customers/switch_page";

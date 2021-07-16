@@ -3,18 +3,17 @@
 	padding: 0px;
 }
 body{
-	background-color: #ddd;
+	background-color: #f1f1f1;
 }
 #side-div, #prod-list{
 	display: inline-block;
 	background-color: white;
-	box-shadow: 2px 10px 12px rgba(0,0,0,0.5);
 }
 #top-paging, #prod-currentpage, #sort-lbl, #sort-list{
 	display: inline-block;
 }
 #side-div{
-	border: 1px solid #ccc;
+	border: 1px solid white;
 	overflow-y: scroll;	
 }
 	#categories-title{
@@ -33,10 +32,10 @@ body{
 	    cursor: pointer;
 	}
 #prod-list{
-	border: 1px solid #ccc;
+	border: 1px solid white;
 }
 	#card {
-		box-shadow: 2px 10px 12px rgba(0,0,0,0.5);
+		box-shadow: 2px 10px 12px #b1a6a6;
 	}
 	#card:hover{
 		transform-style: preserve-3d;

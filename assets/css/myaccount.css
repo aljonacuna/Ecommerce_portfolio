@@ -1,4 +1,132 @@
+*{
+	padding: 0px;
+	margin: 0px;
+}
+body{
+	background-color: #f1f1f1;
+}
+	label{
+		color: #827a7a;
+	}
+	
+	#divider{
+		border-top: 1px solid #d6d6d6;
+		margin: 20px 0px 10px 0px; 
+	}
+	#lbl-myaccount{
+		color: #353030;
+	}
+	#side-nav{
+		font-weight: bold;
+		background-color: white;
+	}
+		#side-nav-ul{
+			font-size: 18px;
+			padding: 20px;
+			color: white;
+		}
+			.icon{
+				margin: 0px 20px 0px 10px;
+			}
+			.active-link{
+				border: none;
+				color: white;
+				background-color: #f94810;
+				width: 220px;
+				cursor: pointer;
+			}
+			.inactive-link, #edit-billing, #edit-shipping{
+				border: none;
+				color: #0d6efd;
+				background-color: white;
+				width: 220px;
+				cursor: pointer;
+			}
+			.inactive-link:hover{
+				color: #f94810;
+			}
+	#content{
+		background-color: white;
+	}
+	#profile-div, #changepass-div{
+		padding: 10px;
+	}
+		.edit-link, input[type="text"], input[type="email"]{
+			display: inline;
+		}
+		#save-btn, #save-btn-shipping, #save-btn-billing{
+			padding: 5px 20px 5px 20px;
+		}
 @media only screen and (max-width: 480px){
+	label{
+		font-size: 12px;
+	}
+	h4{
+		font-size: 16px;
+	}
+	h3{
+		font-size: 16px;
+	}
+	.alert{
+		font-size: 10px;
+	}
+	#side-nav, #content{
+		display: block;
+	}
+	#content, #side-nav{
+		margin: 20px 5% 10px 5%;
+	}
+	#lbl-myaccount{
+		margin: 10px 0px 5px 40px;
+	}
+	#side-nav{
+		width: 90%;
+		padding: 10px 0px 10px 25px; 
+	}
+		#changepass, #info, #address{
+			margin: 0px 0px 0px 0px; 
+		}
+			.icon{
+				margin: 0px 20px 0px 10px;
+			}
+	#content{
+		width: 90%;
+	}
+	#profile-div, #changepass-div{
+		padding: 10px;
+	}
+		#input-div{
+			width: 100%;
+			margin: 50px 0px 10px 0px;
+		}
+			#link-input{
+				width: 100%;
+			}
+			.edit-link, input[type="text"], input[type="email"]{
+				display: inline;
+			}
+			#save-btn, #save-btn-shipping, #save-btn-billing{
+				padding: 5px 20px 5px 20px;
+			}
+			#lname, #fname, #email, #newpass, #confpass{
+				width: 90%;
+				margin-bottom: 30px;
+			}
+			#save-btn{
+				width: 100%;
+			}
+	#shipping-billing-info{
+		margin: 0px 0px 10px 0px;
+		width: 90%;
+		padding: 20px;
+	}
+		#myTab{
+			margin: 40px 0px 0px 0px;
+		}
+		#edit-billing, #edit-shipping{
+			font-size: 12px;
+			margin: 20px 0px 0px 10px;
+		}
 
 }
 
@@ -8,9 +136,70 @@
 	
 }
 @media only screen and (min-width: 1024px){
-	#cart{
-		margin-left: 700px;
+	#main{
+		padding: 20px 10px 20px 30px;
 	}
+		#cart{
+			margin-left: 700px;
+		}
+		#side-nav, #content{
+			display: inline-block;
+		}
+		#content{
+			margin: 20px 0px 10px 20px;
+		}
+		#side-nav{
+			margin: 20px 0px 10px 40px;
+		}
+		#lbl-myaccount{
+			margin: 10px 0px 5px 40px;
+		}
+		#side-nav{
+			width: 20%;
+			vertical-align: top;
+			padding: 10px 0px 10px 5px; 
+		}
+			#changepass, #info, #address{
+				margin: 15px 0px 15px 0px; 
+			}
+				.icon{
+					margin: 0px 20px 0px 10px;
+				}
+		#content{
+			width: 70%;
+		}
+		#profile-div, #changepass-div{
+			padding: 10px;
+		}
+			#input-div{
+				width: 80%;
+				margin: 50px 10px 10px 100px;
+			}
+				#link-input{
+					width: 100%;
+				}
+				.edit-link, input[type="text"], input[type="email"]{
+					display: inline;
+				}
+				#save-btn, #save-btn-shipping, #save-btn-billing{
+					padding: 5px 20px 5px 20px;
+				}
+				#lname, #fname, #email, #newpass, #confpass{
+					width: 60%;
+					margin-bottom: 30px;
+				}
+		#shipping-billing-info{
+			margin: 0px 0px 10px 0px;
+			width: 100%;
+			padding: 20px;
+		}
+			#myTab{
+				margin: 40px 0px 0px 0px;
+			}
+			#edit-billing, #edit-shipping{
+				font-size: 16px;
+				margin: 20px 0px 0px 10px;
+			}
 
 }		
 

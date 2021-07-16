@@ -3,7 +3,7 @@
 	margin: 0px;
 }
 body{
-	background-color: #ddd;
+	background-color: #f1f1f1;
 }
 	#msg-div{
 		padding: 18px 20px 0px 20px;
@@ -16,7 +16,6 @@ body{
 		text-decoration: none;
 	}
 	#order-section{
-		border: 1px solid #ccc;
 		background-color: white;
 	}
 	table{

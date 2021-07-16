@@ -94,12 +94,13 @@
 						
 					}
 					else {
-						toast_div.style.background = "#af1105";
-						toast_div.style.height = "200px";
+						toast_div.style.background = "#f8d7da";
+						toast_div.style.height = "180px";
 						icon_toast.classList.remove("fa-check-circle");
 						icon_toast.classList.add("fa-exclamation-circle");
-						text_toast.style.fontSize = "20px";
-						text_toast.innerText = "Error: There are only "+<?= $product['qty']?>+" item/s left in the stocks";
+						text_toast.style.fontSize = "16px";
+						text_toast.style.color = "#842029";
+						text_toast.innerText = "Unable to add the item in the cart, there are only "+<?= $product['qty']?>+" item/s left in the stocks";
 					}
 					
 					var toast_msg = new bootstrap.Toast(toast_div, option);

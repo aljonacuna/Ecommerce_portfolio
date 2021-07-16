@@ -6,7 +6,6 @@
 			parent::__construct();
 			$this->load->model("Customer");
 			$this->load->model("Session");
-			$this->load->library('stripe_lib'); 
 		}
 		public function index() {
 			$this->home();

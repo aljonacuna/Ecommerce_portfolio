@@ -1,6 +1,6 @@
 <div class="footer">
 	<section class="contacts">
-		<label>Contact me @</label>
+		<span>Contact me @</span>
 		<ul class="navbar-nav" id="footer-ul">
 			<li class="nav-item" id="footer-li">
 				<a href="" id="footer-link">Facebook</a>

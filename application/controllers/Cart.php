@@ -148,7 +148,7 @@
 
 		public function edit_billing_address($id) {
 			$input = $this->input->post();
-			$result = $this->Customer->update_billing_address($input, $id);
+			$result = $this->Customer->update_address($input, $id);
 			if ($result == true) {
 				redirect("customers/cart");
 			}

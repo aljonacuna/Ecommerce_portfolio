@@ -113,16 +113,18 @@
 			return $this->db->query($query, $values)->num_rows();
 		}
 
-		public function update_billing_address($post, $id) {
-			$query_check = "SELECT city FROM addresses WHERE street = ?  && town = ? && city = ?";
+		public function update_address($post, $id) {
+			$query_check = "SELECT id FROM addresses WHERE street = ?  && town = ? && city = ?";
 			if ($this->check_address($post['street'], $post['city'], $post['town'], $query_check) > 0) {
 				$address_id = $this->db->query("SELECT id FROM addresses WHERE street = ?", array($post['street']))->row_array();
 				$result = $this->db->query("UPDATE addresses_role SET address_id = ? WHERE id = ?", 
-											array($address_id, $id));
+											array($address_id['id'], $id));
 				if ($result == true) {
+					$this->session->set_flashdata("msg_address", "Successfully updated your address");
 					return true;
 				}
 				else {
+					$this->session->set_flashdata("msg_address", "Failed to update your address, Please try again");
 					return false;
 				}
 			}
@@ -197,7 +199,7 @@
 				$zip = $post['zip'];
 				//encrypt pass using md5 and salt
 				$encrypt_pass = md5($pass.''.$salt);
-				/*if user is valid to the following codes */
+				/*if user is valid do the following codes */
 				if ($this->is_name_has_number($fname, $lname)) {
 					/*check if there are user with the same email address if email already exist 
 					do the else*/
@@ -235,6 +237,57 @@
 			}
 		}
 
+		//update user info
+		public function update_user_info($post, $email_current, $id) {
+			$fname = $post['fname'];
+			$lname = $post['lname'];
+			$email = $post['email'];
+			$is_email_existing = ($this->isExist($email) == 0);
+			if ($this->is_name_has_number($fname, $lname) && 
+				($is_email_existing || $email == $email_current)) {
+				$query = "UPDATE users SET fname = ?, lname = ?, email = ? WHERE id = ?";
+				$value = array($fname, $lname, $email, $id);
+				$this->db->query($query, $value);
+				$result = $this->user_info($email);
+				$user = array(
+							"id"=>$result["id"],
+							"fname"=>$result["fname"],
+							"lname"=>$result["lname"],
+							"email"=>$result["email"],
+							"is_logged_in"=>true
+						);
+				$this->session->set_userdata("info", $user);
+				$this->session->set_flashdata("msg", "Successfully updated user information");
+				return true;
+			}
+			else {
+				$msg = (!$is_email_existing && $email != $email_current) ? "Email address already taken" : "Name is invalid numbers are not allowed";
+				$this->session->set_flashdata("msg", $msg);
+				return false;
+			}
+		}
+
+		public function changepass($post, $id) {
+			$salt = bin2hex(openssl_random_pseudo_bytes(22));
+			$newpass = $post['newpass'];
+			$confpass = $post['confpass'];
+			$encrypt_pass = md5($newpass.''.$salt);
+			if (strlen($newpass) < 8) {
+				$this->session->set_flashdata("msg_changepass", "Password length required atleast 8 characters");
+				return false;
+			}
+			else if ($newpass != $confpass) {
+				$this->session->set_flashdata("msg_changepass", "Passwords do not matched");
+				return false;
+			}
+			else {
+				$query = "UPDATE users SET password = ?, salt = ? WHERE id = ?";
+				$value = array($encrypt_pass, $salt, $id);
+				$this->session->set_flashdata("msg_changepass", "Successfully change your password");
+				return $this->db->query($query, $value);
+			}
+		} 
+
 		//end of saving the users info
 
 		/*-----------------------------------------------------------------------------------------------------*/
@@ -247,16 +300,17 @@
 			if ($this->form_validation->run() === TRUE) {
 				$email = $post['email_login'];
 				$pass = $post['password_login'];
-				$result	= $this->db->query("SELECT * from users WHERE email = ?",array($email))->row_array();
+				$result	= $this->user_info($email);
 				$encrypt_pass = md5($pass.''.$result['salt']);
 				if ($encrypt_pass == $result['password']) {
 					$user = array(
 							"id"=>$result["id"],
 							"fname"=>$result["fname"],
 							"lname"=>$result["lname"],
+							"email"=>$result["email"],
 							"is_logged_in"=>true
-					);
-					$this->session->set_userdata("info",$user);
+						);
+					$this->session->set_userdata("info", $user);
 					return $result;
 				}
 				else {
@@ -273,9 +327,12 @@
 			}
 		}
 		/*-----------------------------------------------------------------------------------------------------*/
-
+		//get the user info
+		public function user_info($email) {
+			$result = $this->db->query("SELECT * from users WHERE email = ?", array($email))->row_array();
+			return $result;
+		}
 		//start of saving the orders
-
 		public function save_orders_transactions($shipping_address, $billing_address, $orders, $info) {
 			date_default_timezone_set("Asia/Manila");
 			$date = date("Y-m-d H:i:s");

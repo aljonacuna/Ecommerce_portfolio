@@ -1,8 +1,8 @@
 @charset "utf-8";
 /* CSS Document */
 body{
-	margin:0px;
-	padding:0px;
+	margin:	0px;
+	padding: 0px;		
 }
 	#slider-container{
 		width: 100%;
@@ -11,7 +11,6 @@ body{
 		display:flex;
 		justify-content: center;
 		align-items: center;
-		box-shadow: 2px 10px 12px rgba(0,0,0,0.5);
 	}
 		ul{
 			list-style:none;
@@ -68,12 +67,12 @@ body{
 		#gallery{
 		    list-style: none outside none;
 		    padding-left: 0;
-		    margin-bottom:0;
+		    margin-bottom: 0;
 		}
 			#list-img{
 			    display: block;
 			/*    margin-right: 0px;*/
-			    cursor:pointer;
+			    cursor: pointer;
 			}
 
 /*--responsive for mobile phone--*/

@@ -51,7 +51,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 */
 
 //ADMINS route
-$route['dashboard'] = "admins/dashboard";
+$route['orders'] = "admins/orders";
 $route['add_product'] = "admins/add_product";
 $route['search'] = "admins/search";
 $route['admin'] = "admins";
@@ -70,7 +70,7 @@ $route['to_login'] = "customers/login_customer";
 $route['cancel_cart/(:any)'] = "cart/delete_cart_items/$1";
 $route['checkout'] = "cart/checkout";
 $route['review'] = "cart/review";
-$route["edit_billing/(:any)"] = "customers/edit_billing_address/$1";
+$route["edit_billing/(:any)"] = "cart/edit_billing_address/$1";
 $route['handlePayment'] = "cart/handlePayment";
 //switch
 // $route['switchpage'] = "customers/switch_page";

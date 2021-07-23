@@ -2,9 +2,9 @@
   <strong>Error: </strong> <?= $msg ?>.
   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
-<div class="container-fluid" id="order-section">
+<div class="container-fluid" id="product-section">
 	<table class="table table-hover">
-		<tr>
+		<tr id="tr-product">
 			<th scope="col">Image</th>
 			<th scope="col">ID</th>
 			<th scope="col">Name</th>
@@ -38,7 +38,7 @@
 		}
 		?>
 			</td>
-			<td><a href="" class="fa fa-pencil fs-5 ms-2 text-reset text-decoration-none"></a>
+			<td><a href="<?= base_url() ?>admins/edit_product/<?= $value['id'] ?>" class="fa fa-pencil fs-5 ms-2 text-reset text-decoration-none"></a>
 				<a href="" class="fa fa-trash fs-5 ms-3 text-reset text-decoration-none"></a></td>
 		</tr>
 <?php   }

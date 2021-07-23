@@ -20,7 +20,11 @@
 			$input = $this->input->post("page");
 			$this->load->view("partials_admin/dashboard_page", $this->get_pagination_data($input));
 		}
-
+		public function sort_by_status() {
+			$to_search = $this->input->post();
+			$this->session->set_userdata("search_orders", $to_search);
+			$this->load->view("partials_admin/dashboard_page", $this->get_pagination_data(1));
+		}
 		public function search_orders() {
 			//if search box is empty reset the session so it will display all the items again
 			if(strlen($this->input->post("search_orders")) == 0) {
@@ -44,7 +48,6 @@
 		}
 
 		public function get_pagination_data($page) {
-		
 			$num_of_result = 5;
 			$rows = $this->Admin->get_transactions_total_count();
 			$num_of_page = (round($rows / $num_of_result) + 1 >= $page + 2) ? $page + 2 : round($rows / $num_of_result) + 1; 

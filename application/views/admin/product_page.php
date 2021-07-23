@@ -45,76 +45,29 @@
 					return false;
 				})
 			});
-			function imagepreview() {
-				var total_file=document.getElementById("uploadImageFile").files.length;
-				for(var i=0;i<total_file;i++) {
-					$('#imagediv').append("<img src='"+URL.createObjectURL(event.target.files[i])+"' id='preview_img'><br>");
-				}
-			}
 		</script>
 	</head>
 	<body>
-		<?php $this->load->view("admin/navbar",$products); ?>
-
-		<!-- add modal section -->
-		<div class="modal fade" id="exampleModal" tabindex="-1" 
-		aria-labelledby="exampleModalLabel" aria-hidden="true">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="exampleModalLabel">Add product</h5>
-						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-					</div>
-					<div class="modal-body">
-						<form action="<?= base_url()?>add_product" method="post" enctype="multipart/form-data" id="imageInputForm" multiple>
-							<label>Name: </label>
-							<input type="text" name="prodname" placeholder="Name" class="form-control">
-							<label>Price: </label>
-							<input type="text" name="price" placeholder="Price" class="form-control">
-							<label>Quantity: </label>
-							<input type="number" name="quantity" placeholder="Quantity" class="form-control">
-							<label>Description: </label>
-							<textarea name="desc" class="form-control" placeholder="Description"></textarea>
-							<label>Categories: </label>
-							<select class="form-select" name="category_select">
-								<option value="default" selected>Choose category</option>
-				<?php   if (!is_null($categories)) { 
-							foreach ($categories as $value) {	?>
-								<option value="<?= $value['name'] ?>"><?= $value['name'] ?></option>
-				<?php		}
-
-						}  ?>
-						
-							</select>
-							<label>Or add new category: </label>
-							<input type="text" name="category" placeholder="Add new category" class="form-control">
-							<label>Upload image: </label>
-							<input type="file" id="uploadImageFile" name="products_image[]" onchange="imagepreview();" class="form-control" multiple>
-							 <div id="imagediv"></div>
-							<input type="submit" value="Add" class="btn btn-primary w-75 mx-5 mt-5"> 
-						</form>
-					</div>
+		<div class="row min-vh-100 flex-column flex-md-row">
+			<?php $this->load->view("admin/navbar", $products); ?>
+			<div class="col px-0 flex-grow-1">
+				<h2>Products</h2>
+			<!-- filter using searchbox or dropdown menu -->
+				<div class="container-fluid">
+					<form action="<?= base_url() ?>ajaxproductspage/search" method="post" id="search-form" autocomplete="off">
+						<div class="input-group mb-3" id="search-div">
+							 <i class=" input-group-text fa fa-search" aria-hidden="true" id="basic-addon1"></i>
+							<input type="search" name="search" placeholder="Search" class="form-control" id="search-box" 
+							aria-label="search" aria-describedby="basic-addon1">
+						</div>
+					</form>
+					<a  type="button" class="btn btn-primary" href="<?= base_url() ?>admins/add_product_page" id="add-product">Add new product</a>
 				</div>
+
+				<!-- list of orders -->
+
+				<div id="load_partial"></div>
 			</div>
 		</div>
-
-		<!-- end of modal section -->
-
-
-		<!-- filter using searchbox or dropdown menu -->
-		<div class="container-fluid">
-			<form action="<?= base_url() ?>ajaxproductspage/search" method="post" id="search-form" autocomplete="off">
-				<div class="input-group mb-3" id="search-div">
-					 <i class=" input-group-text fa fa-search" aria-hidden="true" id="basic-addon1"></i>
-					<input type="search" name="search" placeholder="Search" class="form-control" id="search-box" 
-					aria-label="search" aria-describedby="basic-addon1">
-				</div>
-			</form>
-			<a  type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" href="#" id="add-product">Add new product</a>
-		</div>
-
-		<!-- list of orders -->
-
-		<div id="load_partial"></div>
 	</body>
 </html>

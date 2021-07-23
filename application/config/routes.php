@@ -51,7 +51,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 */
 
 //ADMINS route
-$route['dashboard'] = "admins/dashboard";
+$route['orders'] = "admins/orders";
 $route['add_product'] = "admins/add_product";
 $route['search'] = "admins/search";
 $route['admin'] = "admins";

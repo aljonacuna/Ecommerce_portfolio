@@ -16,7 +16,6 @@
 		<script type="text/javascript" src="<?= asset_url() ?>js/JQuery3.3.1.js"></script>
 		<script type="text/javascript" src="<?= asset_url() ?>js/lightslider.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.js"></script>
-<!-- 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
 		<script src="jquery.js"></script>
 		<script src="jquery.rateyo.js"></script>
 		<script type="text/javascript">
@@ -125,10 +124,6 @@
 			</ol>
 		</nav>
 		
-		<!-- product review section -->
-		<!-- <div class="container-fluid" id="review-div">
-
-		</div> -->
 		<div id="main">
 			<!-- product section -->
 			<div class="container-fluid" id="product-section">

@@ -38,7 +38,7 @@
 				$this->input->post();
 				$this->session->set_userdata("search", $to_search);
 			}
-			$num_of_result = 3;
+			$num_of_result = 5;
 			$rows = $this->Admin->prod_tot_num();
 			$num_of_page = (round($rows / $num_of_result) + 1 >= $page + 2) ? $page + 2 : round($rows / $num_of_result) + 1; 
 			$start = ($page-1) * $num_of_result;

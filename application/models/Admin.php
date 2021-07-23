@@ -5,8 +5,8 @@
 			parent::__construct();
 
 		}
-		public function add_product($post,$images) {
-			$this->form_validation->set_rules("prodname","Product name","trim|required");
+		public function edit_add_product($post, $images) {
+			$this->form_validation->set_rules("prodname", "Product name", "trim|required");
 			$this->form_validation->set_rules("price","Price","trim|required");
 			$this->form_validation->set_rules("quantity","Quantity","trim|required");
 			$this->form_validation->set_rules("desc","Description","trim|required");
@@ -14,6 +14,8 @@
 			$date = date("Y-m-d H:i:s");
 			$id = 0;
 			$counter = 0;
+			$is_exist_input = isset($post['old_images']) ? true : false;
+			$new_images = ($images == "" && $is_exist_input) ? $post['old_images'] : $images;
 			if ($this->form_validation->run() === TRUE) {
 				if ($post['category'] == TRUE) {
 					$category = $post['category'];
@@ -43,10 +45,18 @@
 					$this->session->set_flashdata("msg","There are error in category please select or if not existing use add");
 				}
 				else {
-					$query = "INSERT INTO products (category_id, name, price, quantity, description, image, created_at, updated_at)
-								VALUES (?,?,?,?,?,?,?,?)";
-					$values = array($id, $post['prodname'], $post['price'], $post['quantity'], $post['desc'], 
-						$images ,$date, $date);
+					if($post['tag'] == "add") {
+						$query = "INSERT INTO products (category_id, name, price, quantity, description, image, created_at, updated_at)
+									VALUES (?,?,?,?,?,?,?,?)";
+						$values = array($id, $post['prodname'], $post['price'], $post['quantity'], $post['desc'], 
+							$images ,$date, $date);
+					}
+					else {
+						$query = "UPDATE products SET category_id = ?, name = ?, price = ?, quantity = ?,
+						description = ?, image = ?, updated_at = ? WHERE id = ?";
+						$values = array($id, $post['prodname'], $post['price'], $post['quantity'], $post['desc'], 
+							$new_images, $date, $post['id']);
+					}
 					return $this->db->query($query, $values);
 				}
 			}
@@ -96,7 +106,7 @@
 		public function get_list_orders($id) {
 			return $this->db->query("SELECT orders.id, products.name, products.price, 
 				orders.total, orders.quantity FROM orders LEFT JOIN products ON 
-				products.id = orders.product_id WHERE orders.transaction_id = ?",array($id))->result_array();
+				products.id = orders.product_id WHERE orders.transaction_id = ?", array($id))->result_array();
 		}
 
 		public function set_order_status($post) {
@@ -108,22 +118,8 @@
 		/*-----------------------------------------------------------------------------------------------------*/
 		//start of get orders
 		public function get_transactions($start, $limit) {
-			$search = "";
-			if ($this->Session->isSearch_notempty()) {
-				$store_session = $this->Session->search_orders();
-				$search = "%".$store_session["search_orders"]."%";
-			} 
-			else{
-				$search = "%%";
-			}
-			return $this->db->query("SELECT transactions.id, CONCAT(users.fname,' ',users.lname) As name, 
-				transactions.created_at, addresses.street, addresses.town, addresses.city, addresses.zip,
-				SUM(orders.total) total , transactions.status_id FROM orders 
-				LEFT JOIN users ON orders.user_id = users.id
-				LEFT JOIN transactions ON orders.transaction_id = transactions.id
-				LEFT JOIN addresses ON transactions.billing_id = addresses.id
-				WHERE CONCAT(users.fname,' ',users.lname) LIKE ?  
-				GROUP BY transactions.id LIMIT $start, $limit",array($search))->result_array();
+			$limit_query = "LIMIT ".$start.", ".$limit;
+			return $this->transactions_query($limit_query)->result_array();
 		}
 
 		//end of get orders
@@ -131,24 +127,34 @@
 		/*-----------------------------------------------------------------------------------------------------*/
 		//start of getting total count of  orders
 		public function get_transactions_total_count() {
+			return $this->transactions_query("")->num_rows();
+		}
+
+		public function transactions_query($limit) {
 			$search = "";
-			if ($this->Session->isSearch_notempty()) {
-				$store_session = $this->Session->search_orders();
-				$search = "%".$store_session["search_orders"]."%";
-			} 
-			else{
-				$search = "%%";
-			}
-			return $this->db->query("SELECT transactions.id, CONCAT(users.fname,' ',users.lname) As name, 
+			$status = "5";
+			$query_transaction = "SELECT transactions.id, CONCAT(users.fname,' ',users.lname) As name, 
 				transactions.created_at, addresses.street, addresses.town, addresses.city, addresses.zip,
 				SUM(orders.total) total , transactions.status_id FROM orders 
 				LEFT JOIN users ON orders.user_id = users.id
 				LEFT JOIN transactions ON orders.transaction_id = transactions.id
-				LEFT JOIN addresses ON transactions.billing_id = addresses.id
-				WHERE CONCAT(users.fname,' ',users.lname) LIKE ? 
-				GROUP BY transactions.id ",array($search))->num_rows();
+				LEFT JOIN addresses ON transactions.shipping_id = addresses.id
+				WHERE CONCAT(users.fname,' ',users.lname) LIKE ? || transactions.id LIKE ? 
+				|| transactions.status_id = ?
+				GROUP BY transactions.id $limit";
+			if ($this->Session->isSearch_notempty()) {
+				$store_session = $this->Session->search_orders();
+				$status = (isset($store_session['status_sort'])) ? $store_session["status_sort"] : "5";
+				$search = (isset($store_session["search_orders"]) ? "%".$store_session["search_orders"]."%" : 
+				($status != "5" ? "" : "%%")) ;
+			} 
+			else{
+				$search = "%%";
+				$status = "5";
+			}
+			$values = array($search, $search, $status);
+			return $this->db->query($query_transaction, $values);
 		}
-
 
 		//end of getting total count of  orders
 		/*-----------------------------------------------------------------------------------------------------*/
@@ -160,9 +166,17 @@
 			return $this->db->query("SELECT name from categories")->result_array();
 		}
 
+		public function get_product_by_id($id) {
+			return $this->db->query("SELECT * from products WHERE id = ?", array($id))->row_array();
+		}
+
 		//get category id by name we will use this if the select field is not equal to default
 		public function get_category_byname($name) {
 			return $this->db->query("SELECT id from categories WHERE name = ?",array($name))->row_array();
+		}
+
+		public function get_category_byid($id) {
+			return $this->db->query("SELECT name from categories WHERE id = ?",array($id))->row_array();
 		}
 
 		//check if the category already exist in the database
@@ -170,6 +184,15 @@
 			return $this->db->query("SELECT id from categories WHERE name = ?" , array($name))->num_rows();
 		}
 		
+		public function dashboard_num_order($status) {
+			if ($status == "") {
+				return $this->db->query("SELECT COUNT(id) as total FROM transactions")->row_array();
+			}
+			else {
+				return $this->db->query("SELECT COUNT(status_id) as total FROM transactions WHERE status_id = ?", 
+					array($status))->row_array();
+			}
+		}
 	}
 
 ?>

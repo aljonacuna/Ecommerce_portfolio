@@ -1,10 +1,10 @@
 <div class="container-fluid" id="order-section">
 	<table class="table table-hover">
-		<tr>
-			<th scope="col">Order id</th>
+		<tr id="tr-order">
+			<th scope="col">Transaction id</th>
 			<th scope="col">Name</th>
 			<th scope="col">Date</th>
-			<th scope="col">Billing address</th>
+			<th scope="col">Shipping address</th>
 			<th scope="col">Total</th>
 			<th scope="col">Status</th>
 	    </tr>
@@ -17,9 +17,9 @@
 			<td><?= $value['street']." ".$value['town']." ".$value['city'] ?></td>
 			<td><?= $value['total'] ?></td>
 			<td>
-				<form action="ajaxorderspage/orders_status" method="post" id="order-status">
+				<form action="<?= base_url() ?>ajaxorderspage/orders_status" method="post" id="order-status">
 					<input type="hidden" name="id" value="<?= $value['id'] ?>">
-					<select class="form-select" name="status">
+					<select class="form-select" name="status" id="status">
 						<option <?= ($value['status_id'] == 0)?"selected":"" ?> value="0">Order in process</option>
 						<option <?= ($value['status_id'] == 1)?"selected":"" ?> value="1">Shipped</option>
 						<option <?= ($value['status_id'] == 2)?"selected":"" ?> value="2">Canceled</option>

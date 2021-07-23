@@ -2,14 +2,45 @@
 	padding: 0px;
 	margin: 0px;
 }
+#newgallery{
+	display: none;
+}
 #search-form,#select-form{
 	display: inline-block;
 }
-
+#display-img{
+	width: 100%;
+	height: 150px;	
+}
 /*#search-box{
 	border-radius: 20px;
 }*/
-
+#desc-text{
+	overflow-y: scroll;
+}
+#price{
+	font-weight: 700;
+	font-size: 18px;
+	color: #f94810;
+}
+#num-of-order, #order-in-process, #shipped, #canceled{
+	text-align: center;
+	color: white;
+	font-weight: bolder;
+	box-shadow: 2px 2px 2px #b1a6a6;
+}
+#num-of-order{
+	background-color: #2196f3;
+}
+#order-in-process{
+	background-color: #ffc107;
+}
+#shipped{
+	background-color: #1bf924;
+}
+#canceled{
+	background-color: #ff2d2d;
+}
 table{
 	font-family: Arial, Helvetica, sans-serif;
 }
@@ -20,8 +51,8 @@ table{
 		padding: 10px;
 		text-align: center;
 	}
-	table tr:nth-child(2n+3){
-		background-color: #ddd;
+	#tr-order, #tr-product{
+		border-bottom: 1px solid black;
 	}
 #image-td{
 	width: 20%;
@@ -34,6 +65,16 @@ table{
 		width: 90%;
 		margin: 20px 5% 0px 5%;
 	}
+	#num-of-order, #order-in-process, #shipped, #canceled{
+		display: block;
+		width: 80%;
+		border: 1px solid #ccc;
+		margin: 10px 0px 0px 40px;
+		height: 70px;
+	}
+	h2{
+		margin: 10px 0px 0px 40px;
+	}
 	#order-section{
 		width: 100%;
 		max-height: 500px;
@@ -41,8 +82,10 @@ table{
 		overflow: scroll;
 	}
 		table{
-			margin-left: -20px;
+			font-size: 12px;
+
 		}
+			
 			#product-img{
 				width: 100%;
 				height: 50px;
@@ -57,22 +100,57 @@ table{
 		width: 80%;
 		margin: 20px 10% 0px 10%;
 	}
-	
-	
+	#input-div, #preview-div{
+		display: block;
+	}
+	#input-div{
+		width: 90%;
+		margin: 0px 0px 0px 0px;
+	}
 
+	#preview-div{
+		width: 90%;
+		height: 600px;
+		margin: 10px 0px 0px 0px;
+		vertical-align: top;
+		padding-left: 20px;
+	}
+		#product-div, #prod-desc-section{
+			display: block;
+		}
+		#prod-desc-section{
+			margin: 10px 0px 0px 0px;
+			width: 100%;
+		}
+			#desc-text{
+				height: 200px;
+			}
+		#product-div{
+			width: 90%;
+			margin: 10px 0px 0px 10px;
+		}
 }
 
 @media only screen and (min-width: 481px){
 	
 }
 @media only screen and (min-width: 1024px){
+	h2{
+		margin: 10px 0px 0px 10px;
+	}
 	#search-form{
 		width: 30%;
 		margin: 20px 0px 0px 80px;
 	}
 	#select-form{
 		width: 20%;
-		margin-left: 500px;
+		margin-left: 400px;
+	}
+	#num-of-order, #order-in-process, #shipped, #canceled{
+		display: inline-block;
+		width: 20%;
+		margin: 10px 0px 0px 40px;
+		height: 100px;
 	}
 	#order-section{
 		max-height: 400px;
@@ -85,13 +163,51 @@ table{
 		}		
 	#pages{
 		width: 50%;
-		margin: 40px 25% 0px 25%;
+		margin: 20px 25% 0px 25%;
 	}
 	#paging-bottom{
 		margin-left: 100px;
 	}
 	#add-product{
-		margin-left: 600px;
+		margin-left: 500px;
 	}
-	
+
+	#input-div, #preview-div{
+		display: inline-block;
+	}
+	#input-div{
+		width: 30%;
+		margin: 0px 0px 0px 20px;
+	}
+		#save-btn, #cancel-btn{
+			display: inline-block;
+			margin: 10px 0px 0px 40px;
+		}
+
+	#preview-div{
+		width: 60%;
+		border-left: 1px solid #212529;
+		height: 600px;
+		margin: 20px 0px 0px 50px;
+		vertical-align: top;
+		padding-left: 20px;
+		position: fixed;
+	}
+		#product-div, #prod-desc-section{
+			display: inline-block;
+		}
+		#prod-desc-section{
+			vertical-align: top;
+			margin: 10px 0px 0px 50px;
+			width: 50%;
+		}
+			#desc-text{
+				height: 200px;
+			}
+		#product-div{
+			width: 30%;
+			margin: 10px 0px 0px 20px;
+		}
+
+
 }	

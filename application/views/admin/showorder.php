@@ -10,47 +10,47 @@
 		<link rel="stylesheet" type="text/css" href="<?= asset_url() ?>css/showorder.css">
 		<link rel="stylesheet" type="text/css" href="<?= asset_url() ?>css/scrollbar.css">
 		<script type="text/javascript" src="<?= asset_url() ?>js/bootstrap.min.js"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
 	</head>
 	<body>
 		<div class="row min-vh-100 flex-column flex-md-row">
 		
-			<?php $this->load->view("admin/navbar"); ?>
+			<?php $this->load->view("admin/navbar", $active); ?>
 			<!-- shipping and billing info section -->
 			<div class="col px-0 flex-grow-1">
 				<div class="container-fluid" id="shipping-billing-info">
-					<h5>Order ID : <?= $customer_info['id'] ?></h5>
+					<h5>Transaction ID : <?= $transaction_id ?></h5>
 					<label id="lbl-shipping">Customer shipping info: </label>
 					<section id="name-section">
-						<label>Name:</label><p><?= $customer_info['name'] ?></p>
+						<label>Name:</label><p><?= $customer_info['fname']." ".$customer_info['lname'] ?></p>
 					</section>
 					<section id="address-section">
-						<label>Address:</label><p><?= $customer_info['street'] ?></p>
+						<label>Address:</label><p><?= $shipping['street'] ?></p>
 					</section>
 					<section id="city-section">
-						<label>Town:</label><p><?= $customer_info['town'] ?></p>
+						<label>Town:</label><p><?= $shipping['town'] ?></p>
 					</section>
 					<section id="town-section">
-						<label>City:</label><p><?= $customer_info['city'] ?></p>
+						<label>City:</label><p><?= $shipping['city'] ?></p>
 					</section>
 					<section id="zip-section">
-						<label>Zipcode:</label><p><?= $customer_info['zip'] ?></p>
+						<label>Zipcode:</label><p><?= $shipping['zip'] ?></p>
 					</section>
 					<label id="lbl-billing">Customer billing info: </label>
 					<section id="name-section">
-						<label>Name:</label><p><?= $customer_info['name'] ?></p>
+						<label>Name:</label><p><?= $customer_info['fname']." ".$customer_info['lname'] ?></p>
 					</section>
 					<section id="address-section">
-						<label>Address:</label><p><?= $customer_info['street'] ?></p>
+						<label>Address:</label><p><?= $billing['street'] ?></p>
 					</section>
 					<section id="city-section">
-						<label>City:</label><p><?= $customer_info['town'] ?></p>
+						<label>City:</label><p><?= $billing['town'] ?></p>
 					</section>
 					<section id="town-section">
-						<label>Name:</label><p><?= $customer_info['city'] ?></p>
+						<label>Name:</label><p><?= $billing['city'] ?></p>
 					</section>
 					<section id="zip-section">
-						<label>Name:</label><p><?= $customer_info['zip'] ?></p>
+						<label>Name:</label><p><?= $billing['zip'] ?></p>
 					</section>
 				</div>
 
@@ -60,7 +60,7 @@
 					<div class="container-fluid" id="order-section">
 						<table class="table table-hover">
 							<tr>
-								<th scope="col">ID</th>
+								<th scope="col">Order ID</th>
 								<th scope="col">Item</th>
 								<th scope="col">Price</th>
 								<th scope="col">Quantity</th>
@@ -73,7 +73,7 @@
 				    		$total+=$value['total'];
 				    		?>
 				    		<tr>
-								<th><a href="showorder.html"><?= $value['id'] ?></a></th>
+								<th><?= $value['id'] ?></a></th>
 								<td><?= $value['name'] ?></td>
 								<td><?= $value['price'] ?></td>
 								<td><?= $value['quantity'] ?></td>
@@ -89,11 +89,11 @@
 									<?php
 										$status = "";
 										$alert = "";
-										if ($customer_info['status_id'] == 0) {
+										if ($status_id == 0) {
 											$status =  "Orders in process";
 											$alert = "info";
 										}
-										else if ($customer_info['status_id'] == 1) {
+										else if ($status_id == 1) {
 											$status = "Shipped";
 											$alert = "success";
 										}

@@ -9,8 +9,8 @@
 		<link rel="stylesheet" type="text/css" href="<?= asset_url() ?>css/cart.css">
 		<link rel="stylesheet" type="text/css" href="<?= asset_url() ?>css/nav_footer.css">
 		<link rel="stylesheet" type="text/css" href="<?= asset_url() ?>css/scrollbar.css">
-		<link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<link href="<?= asset_url() ?>fontawesome/css/all.css" rel="stylesheet">
+		<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
 	</head>
 	<body>
 		<!-- navbar section -->
@@ -31,8 +31,9 @@
 			<ol class="breadcrumb px-2">
 				<li class="breadcrumb-item"><a class="text-warning" id="home-link" 
 					href="<?= base_url() ?>home" id="continue-shopping-link">Home</a></li>
-				<li class="breadcrumb-item active" aria-current="page"><a href="#">Cart</a></li>
-				<li class="breadcrumb-item active" aria-current="page"><a href="#shipping-billing-info">Shipping and Billing address</a></li>
+				<li class="breadcrumb-item active" aria-current="page"><a href="#" class="text-decoration-none">Cart</a></li>
+				<li class="breadcrumb-item active" aria-current="page"><a href="#shipping-billing-info"
+				 class="text-decoration-none">Shipping and Billing address</a></li>
 			</ol>
 		</nav>
 
@@ -47,6 +48,7 @@
 					</div>
 					<div class="modal-body">
 						<form action="edit_billing/<?= $billing_address['role_id'] ?>" method="post">
+							<input type="hidden" name="csrf_test_name" value="<?= $this->security->get_csrf_hash() ?>">
 							<label>Street: </label>
 							<input type="text" name="street" placeholder="Street" class="form-control">
 							<label>City: </label>

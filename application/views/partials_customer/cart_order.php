@@ -24,8 +24,7 @@ if($orders != "") {
 				<td>&#8369; <?= $value['tot_price'] ?></td>
 			</tr>
 
-<?php   	$total_price+=$value['tot_price'];
-		?>
+<?php   	$total_price+=$value['tot_price']; ?>
 <?php		
 	}
 }	
@@ -37,6 +36,7 @@ if($orders != "") {
 
 		<article id="total-price-article">
 			<p id="total-price">Total price: <span id="tot-price-text">&#8369; <?= $total_price ?></span></p>
+			<p>+ Shipping fee &#8369; 10</p>
 		</article>
 		<article id="paynow-article">
 			<a href="<?= base_url() ?>checkout" id="paynow-btn" 

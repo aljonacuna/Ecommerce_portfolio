@@ -45,6 +45,7 @@
 				 <span class='result'>Rating: 0</span>
 				<form action="<?= base_url() ?>addtocart" method="post" id="add-cart-form">
 					<p id="price">Price: &#8369; <?= $value['price'] ?></p>
+					<input type="hidden" name="csrf_test_name" value="<?= $token ?>">
 					<input type="hidden" name="id" value="<?= $value['product_id'] ?>">
 					<section id="qty-section">
 						<label id="lbl-quantity">Quantity: </label>
@@ -53,5 +54,6 @@
 					</section>
 				</form>
 			</div>
+			<div class="csrf_token" id="<?= $token ?>"></div>
 		</div>
 <?php	} ?>

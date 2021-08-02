@@ -21,6 +21,7 @@
 			<div class="mb-3  edit-address" id="edit-shipping"><i class="fa fa-pencil-square-o fs-6" >
 				</i> Edit shipping address</div>
 			<form action="myaccounts/update_address/<?= $shipping_address['role_id'] ?>" method="post" id="shipping-form">
+				<input type="hidden" name="csrf_test_name" value="<?= $token ?>">
 				<label for="shipping_address">Address</label>
 				<input type="text" name="street" class="form-control shipping" id="shipping-address" placeholder="Address"
 				value="<?= $shipping_address['street'] ?>" disabled="true">
@@ -41,6 +42,7 @@
 			<div class="mb-3 edit-address" id="edit-billing"><i class="fa fa-pencil-square-o fs-6">
 				</i> Edit billing address</div>
 			<form action="myaccounts/update_address/<?= $billing_address['role_id'] ?>" method="post" id="billing-form">
+				<input type="hidden" name="csrf_test_name" value="<?= $token ?>">
 				<label for="address">Address</label>
 				<input type="text" name="street" class="form-control billing" id="billing-address" placeholder="Address" value="<?= $billing_address['street'] ?>" disabled="true">
 				<label for="city">City</label>
@@ -56,4 +58,5 @@
 			</form>
 		</div>
 	</div>
+	<div class="csrf_token" id="<?= $token ?>"></div>
 </div>

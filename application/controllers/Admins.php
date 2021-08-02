@@ -5,22 +5,28 @@
 		public function __construct() {
 			parent::__construct();
 			$this->load->model("Admin");
+			$this->load->model("Customer");
 			$this->load->model("Session");
 		}
 
 		public function index() {
-			$msg['msg_login'] = ($this->session->flashdata("msg_login") == TRUE) ?
-			$this->session->flashdata("msg_login") : "";
-			$this->load->view("admin/admin_login",$msg);
+			$not_admin = ($this->session->userdata("error_not_admin") == TRUE) ? 
+			$this->session->userdata("error_not_admin") : false;
+			if ($this->Session->is_loggedin("admin") && !$not_admin) {
+				redirect("admins/orders");
+			}
+			else {
+				$msg['msg_login'] = ($this->session->flashdata("msg_login") == TRUE) ?
+				$this->session->flashdata("msg_login") : "";
+				$msg['msg_not_admin'] = ($this->session->userdata("msg_not_admin") == TRUE) ?
+				$this->session->userdata("msg_not_admin") : "";
+				$this->load->view("admin/admin_login", $msg);
+			}
 		}
 		public function to_orders() {
-			if ($this->Session->is_loggedin()) {
-				$is_admin = $this->Session->get_session_userdata();
-				$data['orders'] = "orders";
-				$data['num_orders'] = $this->Admin->dashboard_num_order("");
-				$data['process'] = $this->Admin->dashboard_num_order("0");
-				$data['shipped'] = $this->Admin->dashboard_num_order("1");
-				$data['canceled'] = $this->Admin->dashboard_num_order("2");
+			if ($this->Session->is_loggedin("admin")) {
+				$is_admin = $this->Session->get_session_userdata("admin");
+				$data['active'] = "orders";
 				$this->load->view("admin/dashboard", $data);
 			}
 			else{
@@ -30,33 +36,41 @@
 		function orders() {
 			$this->to_orders();
 		}
-		public function login() {
-			$this->load->model("Customer");
+		public function login() {			
 			$input = $this->input->post();
-			$result = $this->Customer->login($input);	
-			if ($result== TRUE && $result['user_role'] == 0) {
-				redirect("admins/orders");
+			$result = $this->Customer->login($input, "admin");	
+			if ($result == true) {
+				if ($result['user_role'] == 0) {
+					$this->session->unset_userdata("error_not_admin");
+					redirect("admins/orders");
+				}
+				else {
+					$this->session->set_userdata("error_not_admin", true);
+					$this->session->set_userdata("msg_not_admin","Customer are prohibited on this page!");
+					redirect("admins/index");
+				}
+				
 			}
 			else{
 				redirect("admins/index");
 			}
+			
 		}
 
 		public function logoff() {
-			$this->session->unset_userdata("info");
+			$this->session->unset_userdata("info_admin");
 			redirect("admins/index");
 		}
-		public function showorder($id) {
-			if ($this->Session->is_loggedin()) {
-				$limit =  $this->Admin->get_transactions_total_count();
-				$temp = $this->Admin->get_transactions(0, $limit);
+		public function showorder($id, $uid) {
+			if ($this->Session->is_loggedin("admin")) {
+				$shipping_billing_id = $this->Admin->get_shipping_billing_id($id);
 				$data['orders'] = $this->Admin->get_list_orders($id);
-				$array = array();
-				foreach ($temp as $value) {
-					if ($value['id'] == $id) {
-						$data["customer_info"] = $value;
-					}
-				}
+				$data['active'] = "orders";
+				$data['status_id'] = $shipping_billing_id['status_id'];
+				$data['shipping'] = $this->Admin->get_addresses_by_id($shipping_billing_id['shipping_id']);
+				$data['billing'] = $this->Admin->get_addresses_by_id($shipping_billing_id['billing_id']);
+				$data['customer_info'] = $this->Admin->get_customer_info_byid($uid);
+				$data['transaction_id'] = $id;
 				$this->load->view("admin/showorder", $data);
 			}
 			else{
@@ -68,8 +82,8 @@
 
 		//start product page
 		public function product_page() {
-			if ($this->Session->is_loggedin()) {
-				$data['products'] = "products";
+			if ($this->Session->is_loggedin("admin")) {
+				$data['active'] = "products";
 				$this->load->view("admin/product_page", $data);
 			}
 			else {
@@ -79,13 +93,13 @@
 		}
 
 		public function add_product_page() {
-			$data['products'] = "products";
+			$data['active'] = "products";
 			$data['categories'] = $this->Admin->get_all_categories();
 			$this->load->view("admin/add_product", $data);
 		}
 
 		public function edit_product($id) {
-			$data['products'] = "products";
+			$data['active'] = "products";
 			$data['categories'] = $this->Admin->get_all_categories();
 			$data['product'] = $this->Admin->get_product_by_id($id);
 			$data['category'] = $this->Admin->get_category_byid($data['product']['category_id']);
@@ -110,7 +124,7 @@
 			$data = array();
 			if (!empty($_FILES['products_image']['name'][0])) {
 				$filesCount = count($_FILES['products_image']['name']);
-				if($filesCount >= 5) {
+				if($filesCount >= 5 && $filesCount <= 5) {
 		            for ($i = 0 ; $i < $filesCount ; $i++) {
 		            	$_FILES['upload_File']['name'] = $_FILES['products_image']['name'][$i]; 
 		            	$_FILES['upload_File']['type'] = $_FILES['products_image']['type'][$i]; 
@@ -151,11 +165,11 @@
 						}
 					}
 					$this->Admin->edit_add_product($input, $img_to_str);
-					// redirect("admins/".$url);
+					redirect("admins/".$url);
 				}
 				else {
 					$this->session->set_flashdata("msg","Please upload image");
-					// redirect("admins/".$url);
+					redirect("admins/".$url);
 				}
 				
 			}
@@ -166,7 +180,7 @@
 				}
 				else {
 					$this->session->set_flashdata("msg","Please upload image");
-					// redirect("admins/".$url);
+					redirect("admins/".$url);
 				}
 			}
 		}

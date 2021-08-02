@@ -13,10 +13,10 @@
 
 		//get the products to dispaly on homepage
 		public function show_product($prod_id, $category_id) {
-			if($this->Session->is_loggedin()) {
+			if($this->Session->is_loggedin("customer")) {
 				// $this->session->unset_userdata('orders');
 				$qty = 0;
-				$data['info'] = $this->Session->get_session_userdata();
+				$data['info'] = $this->Session->get_session_userdata("customer");
 				$id = $data['info']['id'];
 			}
 			else {
@@ -52,16 +52,16 @@
 		}
 
 		public function cart() {
-			if ($this->Session->is_loggedin()) {
-				$info = $this->Session->get_session_userdata();
+			if ($this->Session->is_loggedin("customer")) {
+				$info = $this->Session->get_session_userdata("customer");
 				$id = $info['id'];
 				$orders = ($this->Session->user_already_exist_in_cart($id)) ? $this->Session->get_order_session()
 				 : [$id => "null"];
 				$address = $this->Customer->get_address($id);
 				$data['shipping_address'] = $address[0];
 				$data['billing_address'] = $address[1];
-				$data['is_loggedin'] = ($this->Session->is_loggedin()) ? 
-				$this->Session->get_session_userdata() : "no";
+				$data['is_loggedin'] = ($this->Session->is_loggedin("customer")) ? 
+				$this->Session->get_session_userdata("customer") : "no";
 				$data["cart"] = ($this->Session->user_already_exist_in_cart($id) && $orders[$id] != "null") ? true : false;
 				$data['orders'] = $orders[$id];
 				$data['user_info'] = $info;
@@ -75,14 +75,18 @@
 		}
 
 		public function order_history() {
-			$data['is_loggedin'] = ($this->Session->is_loggedin()) ? 
-			$this->Session->get_session_userdata() : "no";
-			$data['orders'] = ($this->Session->is_cartnotempty()) ? 
-			$this->Session->get_order_session() : array();
-			$data['info'] = ($this->Session->is_loggedin()) ?
-			$this->Session->get_session_userdata() : array();
-			$data['name'] = $this->user_name($data['info']);
-			$this->load->view("customer/order_history", $data);
+			if ($this->Session->is_loggedin("customer")) {
+				$data['is_loggedin'] = $this->Session->get_session_userdata("customer");
+				$data['orders'] = ($this->Session->is_cartnotempty()) ? 
+				$this->Session->get_order_session() : array();
+				$data['info'] = $this->Session->get_session_userdata("customer");
+				$data['name'] = $this->user_name($data['info']);
+				$this->load->view("customer/order_history", $data);
+			}
+			else {
+				redirect("customers/to_login_register");
+			}
+			
 		}
 	
 
@@ -90,10 +94,10 @@
 		public function home() {
 			$data['categories'] = $this->Customer->get_all_categories();
 			//to check if guest or logged in user if user currently logged in i will pass the users info
-			$data['is_loggedin'] = ($this->Session->is_loggedin()) ? 
-			$this->Session->get_session_userdata(): "no";
-			$info = ($this->Session->is_loggedin()) ?
-			$this->Session->get_session_userdata() : array();
+			$data['is_loggedin'] = ($this->Session->is_loggedin("customer")) ? 
+			$this->Session->get_session_userdata("customer"): "no";
+			$info = ($this->Session->is_loggedin("customer")) ?
+			$this->Session->get_session_userdata("customer") : array();
 			$data['name'] = $this->user_name($info);
 			$this->load->view("customer/home", $data);
 		}
@@ -116,7 +120,7 @@
 		//this is the process of authentication of users
 		public function login_customer() {
 			$input = $this->input->post();
-			$isValid = $this->Customer->login($input);
+			$isValid = $this->Customer->login($input, "customer");
 			if ($isValid) {
 				redirect("/");
 			}
@@ -128,7 +132,7 @@
 
 		//this is the logout method of users
 		public function logoff_customer() {
-			$this->session->unset_userdata("info");
+			$this->session->unset_userdata("info_customer");
 			$this->session->set_flashdata("is_login_register","login");
 			redirect("customers/to_login_register");
 		}
@@ -142,15 +146,20 @@
 			$this->session->flashdata("msg_reg") : "";
 			$msg_and_active['msg_login'] = ($this->session->flashdata("msg_login") == TRUE) ?
 			$this->session->flashdata("msg_login") : "";
-			$this->load->view("customer/registration_login",$msg_and_active);
+			$this->load->view("customer/registration_login", $msg_and_active);
 		}
 
 		public function myaccount() {
-			$info = ($this->Session->is_loggedin()) ?
-			$this->Session->get_session_userdata() : array();
-			$data['is_loggedin'] = $info;
-			$data['name'] = $this->user_name($info);
-			$this->load->view("customer/myaccount", $data);
+			if ($this->Session->is_loggedin("customer")) {
+				$info = $this->Session->get_session_userdata("customer");
+				$data['is_loggedin'] = $info;
+				$data['name'] = $this->user_name($info);
+				$this->load->view("customer/myaccount", $data);
+			}
+			else {
+				redirect("customers/to_login_register");
+			}
+			
 		}
 
 		public function user_name($info) {

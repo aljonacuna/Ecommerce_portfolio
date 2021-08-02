@@ -1,14 +1,15 @@
 <nav class="navbar navbar-expand-lg navbar-light" id="navbar">
 	<div class="container-fluid">
-		<a class="navbar-brand" href="#">Dojo Ecommerce</a>
+		<a class="navbar-brand" href="<?= base_url() ?>home">Dojo Ecommerce</a>
 	    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 	      <span class="navbar-toggler-icon"></span>
 	    </button>
 	    <div class="collapse navbar-collapse" id="navbarSupportedContent">
 	    	<form class="d-flex" id="form-search" action="ajaxcustomers/search_prodname" method="post">
+	    		<input type="hidden" name="csrf_test_name" id="csrf_token">
 	    		<div class="input-group">
 	    			<i class=" input-group-text fa fa-search" aria-hidden="true" id="basic-addon1"></i>
-		       		<input class="form-control me-2" type="search" name="search" placeholder="Search Product" aria-label="Search" aria-describedby="basic-addon1">
+		       		<input class="form-control me-2" type="search" name="search" placeholder="Search Product" aria-label="Search" aria-describedby="basic-addon1" id="search">
 		        </div>
 	      	</form>
 	    	<ul class="navbar-nav me-auto mb-2 mb-lg-0" id="nav-ul">

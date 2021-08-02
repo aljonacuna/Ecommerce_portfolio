@@ -12,8 +12,8 @@
 		//save to session the add to cart products
 		public function addtocart() {
 			//check if user is currently online if not redirect to login
-			if ($this->Session->is_loggedin()) {
-				$user_data = $this->Session->get_session_userdata();
+			if ($this->Session->is_loggedin("customer")) {
+				$user_data = $this->Session->get_session_userdata("customer");
 				$input = $this->input->post();
 				$price = $this->Customer->get_price($input['id']);
 				$orders = $this->Session->get_order_session();
@@ -78,19 +78,32 @@
 		}
 
 		public function check_quantity($input, $cart) {
+			$prod_exist = false;
 			foreach ($cart as $key => $value) {
-				if ($input['qty'] >= $value['quantity'] + $input['quantity']) {
-					return true;
+				if ($input['id'] == $value['prod_id']) {
+					$prod_exist = true;
 				}
 				else {
-					return false;
+					$prod_exist = false;
 				}
+				if ($prod_exist) {
+					if ($input['qty'] >= $value['quantity'] + $input['quantity']) {
+						return true;
+					}
+					else {
+						return false;
+					}
+				}
+				else {
+					return true;
+				}
+				
 			}
 
 		}
 		public function checkout() {
 			$tot_amount = 0;
-			$user_data = $this->Session->get_session_userdata();
+			$user_data = $this->Session->get_session_userdata("customer");
 			if ($this->Session->user_already_exist_in_cart($user_data['id'])) {
 				$orders = $this->Session->get_order_session();
 				foreach ($orders[$user_data['id']] as $key => $value) {
@@ -104,12 +117,14 @@
 			$data['tot_amount'] = $tot_amount;
 			$data['success'] = ($this->session->flashdata("success") == TRUE) ? 
 			$this->session->flashdata("success") : "";
+			$data['fail'] = ($this->session->flashdata("fail") == TRUE) ? 
+			$this->session->flashdata("fail") : "";
 			$this->load->view("customer/payment", $data);
 		}
 
 		public function handlePayment() {
 			$orders = $this->Session->get_order_session();
-			$info = $this->Session->get_session_userdata();
+			$info = $this->Session->get_session_userdata("customer");
 			$id = $info['id']; 
 			$tot_amount = 0;
 			$token = $this->input->post('stripeToken');
@@ -120,21 +135,22 @@
 	      	$customer = $this->stripe_lib->create_customer($customer_email['email'], $token);
 	      	if ($customer == true) {
 	      		$charge = $this->stripe_lib->create_charge($tot_amount, $customer->id);
-	      		if ($charge == true) {
-	      			$address = $this->Customer->get_address($id);
-					$shipping_address = $address[0];
-					$billing_address = $address[1];
-					$this->Customer->save_orders_transactions($shipping_address, $billing_address, $orders, $info);
-					$this->session->set_flashdata('success', 'Payment has been successful.');
+	      		$address = $this->Customer->get_address($id);
+				$shipping_address = $address[0];
+				$billing_address = $address[1];
+				$result = $this->Customer->save_orders_transactions($shipping_address, $billing_address, $orders, $info);
+	      		if ($charge == true && $result == true) {
+					$this->session->set_flashdata('success', 'Thank you, your payment has been successful.');
 					redirect("cart/checkout"); 
 	      		}
 	      		else {
-	      			$this->session->set_flashdata('success', 'Error: Failed to pay the products, Please try again.');
+	      			$msg = ($result) ? "Error on saving orders" : "Error: Payment been sent, Click the button only once.";
+	      			$this->session->set_flashdata('fail', $msg);
 					redirect("cart/checkout"); 
 	      		}	
 	      	}
 	      	else {
-	      		$this->session->set_flashdata('success', 'Error: Failed to pay the products, Please try again.');
+	      		$this->session->set_flashdata('fail', 'Error: Failed to pay the products, Please try again.');
 				redirect("cart/checkout"); 
 	      	}
 				
@@ -143,7 +159,7 @@
 		public function review() {
 			$input = $this->input->post();
 			$result = $this->Customer->review($input);
-			redirect("orderhistory");
+			redirect("customers/order_history");
 		}
 
 		public function edit_billing_address($id) {
@@ -157,7 +173,7 @@
 			}
 		}
 		public function delete_cart_items($key) {
-			$user_data = $this->Session->get_session_userdata();
+			$user_data = $this->Session->get_session_userdata("customer");
 			$id = $user_data['id'];
 			$arr = $this->session->userdata("orders");
 			if (sizeof($arr[$id]) > 1) {
@@ -171,8 +187,9 @@
 		}
 
 		public function load_nav($prod_id) {
-			if ($this->Session->is_loggedin()) {
-				$user_info['info'] = $this->Session->get_session_userdata();
+			$user_info['token'] = $this->security->get_csrf_hash();
+			if ($this->Session->is_loggedin("customer")) {
+				$user_info['info'] = $this->Session->get_session_userdata("customer");
 				$user_info['name'] = $this->user_name($user_info['info']);
 				$id = $user_info['info']['id'];
 				$qty = 0;
@@ -191,7 +208,7 @@
 				$this->load->view("partials_customer/navbar_main", $user_info);  
 			}
 			else{
-				$this->load->view("partials_customer/navbar_guest");  
+				$this->load->view("partials_customer/navbar_guest", $user_info);  
 			}
 		}
 		public function user_name($info) {

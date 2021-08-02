@@ -8,8 +8,8 @@
 
 		//start of getting all the products
 
-		public function get_all_products($start, $limit) {
-			return $this->product_query("getprod", $start, $limit)->result_array();
+		public function get_all_products($start, $limit, $search, $key) {
+			return $this->product_query("getprod", $start, $limit, $search, $key)->result_array();
 		}
 
 		//end of getting all the products
@@ -28,26 +28,27 @@
 
 		//start count all the products
 
-		public function get_totprod_count() {
-			return $this->product_query("count", 0, 9)->num_rows();
+		public function get_totprod_count($search, $key) {
+			return $this->product_query("count", 0, 9, $search, $key)->num_rows();
 		}
 
 		//end count all the products
 
-		public function product_query($tag, $start, $limit) {
+		public function product_query($tag, $start, $limit, $search, $key) {
 			$limit = ($tag == "count") ? "" : "LIMIT ".$start.", ".$limit;
-			if ($this->session->userdata("search") == FALSE) {
-				return $this->db->query("SELECT * from products $limit");
-			}
-			else {
-				$search = $this->session->userdata("search");
-				if (isset($search['category'])) {
-					return $this->db->query("SELECT products.name, products.id, products.image, products.category_id, products.price from products 
+			// if ($this->session->userdata("search") == FALSE) {
+			// 	return $this->db->query("SELECT * from products $limit");
+			// }
+			// else {
+				if ($key == "category") {
+					return $this->db->query("SELECT products.name, products.id, products.image, 
+							products.category_id, products.price 
+							FROM products 
 							LEFT JOIN categories ON categories.id = products.category_id
 							WHERE categories.name = ? $limit", array($search));
 				}
-				else if (isset($search['sort'])) {
-					if ($search["sort"] == "most") {
+				else if ($key == "sort") {
+					if ($search == "most") {
 						return $this->db->query("SELECT products.name, products.id, products.image,
 								products.category_id, products.price
 								FROM products 
@@ -56,21 +57,25 @@
 								ORDER BY SUM(orders.quantity) DESC $limit");
 					}
 					else {
-						$order_by = ($search["sort"] == "high") ? "DESC" : "ASC";
-						return $this->db->query("SELECT * FROM products
-								ORDER BY price $order_by $limit");
+						if($search != "5") {
+							$order_by = ($search == "high") ? "DESC" : "ASC";
+							return $this->db->query("SELECT * FROM products
+									ORDER BY price $order_by $limit");
+						}
+						else {
+							return $this->db->query("SELECT * FROM products $limit");
+						}
 					}
 					
 				}
 				else{
-					$search = $search['search'];
-					$search = "%".$search."%";
+					$search = ($search != "1") ? "%".urldecode($search)."%" : "%%";
 					return $this->db->query("SELECT * from products
 											WHERE name LIKE ? 
 											$limit", array($search));
 				}
 				
-			}
+			// }
 		}
 		/*------------------------------------------------------------------------------------------------------*/
 
@@ -256,7 +261,7 @@
 							"email"=>$result["email"],
 							"is_logged_in"=>true
 						);
-				$this->session->set_userdata("info", $user);
+				$this->session->set_userdata("info_customer", $user);
 				$this->session->set_flashdata("msg", "Successfully updated user information");
 				return true;
 			}
@@ -293,7 +298,7 @@
 		/*-----------------------------------------------------------------------------------------------------*/
 
 		//start of users authentication
-		public function login($post) {
+		public function login($post, $user_type) {
 			$this->form_validation->set_rules("email_login", "Email", "trim|required|valid_email");
 			$this->form_validation->set_rules("password_login", "Password", "trim|required|min_length[8]");
 			$this->form_validation->set_error_delimiters('<div class="error">', '</div>');
@@ -310,7 +315,13 @@
 							"email"=>$result["email"],
 							"is_logged_in"=>true
 						);
-					$this->session->set_userdata("info", $user);
+					if ($user_type == "customer") {
+						$this->session->set_userdata("info_customer", $user);
+					}
+					else {
+						$this->session->set_userdata("info_admin", $user);
+					}
+					
 					return $result;
 				}
 				else {
@@ -336,6 +347,7 @@
 		public function save_orders_transactions($shipping_address, $billing_address, $orders, $info) {
 			date_default_timezone_set("Asia/Manila");
 			$date = date("Y-m-d H:i:s");
+			$encounter_error = false;
 			$query_orders = "INSERT INTO  orders (quantity, total, created_at, updated_at, user_id, product_id,
 			transaction_id) VALUES(?,?,?,?,?,?,?)";
 			$query_deduct_qty = "UPDATE products SET quantity = quantity - ? WHERE id = ?";
@@ -349,13 +361,20 @@
 					$values = array($value['quantity'], $value['tot_price'], $date ,$date, 
 						$info['id'], $value['prod_id'], $id);
 					$values_deduct_qty = array($value['quantity'], $value['prod_id']);
-					$this->db->query($query_orders, $values);
+					$encounter_error = $this->db->query($query_orders, $values);
 					$this->db->query($query_deduct_qty, $values_deduct_qty);
 				}
 				$orders = $this->session->userdata("orders");	
 				unset($orders[$info['id']]);	
 				$this->session->set_userdata("orders", $orders);
 			
+			}
+			if ($encounter_error) {
+				return true;
+			}
+			else {
+				$this->db->query("DELETE FROM transactions WHERE id = ?", array($id));
+				return false;
 			}
 			
 		}

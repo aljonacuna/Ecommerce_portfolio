@@ -50,19 +50,25 @@
 									VALUES (?,?,?,?,?,?,?,?)";
 						$values = array($id, $post['prodname'], $post['price'], $post['quantity'], $post['desc'], 
 							$images ,$date, $date);
+						return $this->db->query($query, $values);
 					}
 					else {
 						$query = "UPDATE products SET category_id = ?, name = ?, price = ?, quantity = ?,
 						description = ?, image = ?, updated_at = ? WHERE id = ?";
 						$values = array($id, $post['prodname'], $post['price'], $post['quantity'], $post['desc'], 
 							$new_images, $date, $post['id']);
+						return $this->db->query($query, $values);
 					}
-					return $this->db->query($query, $values);
+					
 				}
 			}
 			else {
 				$this->session->set_flashdata("msg","Please fill out all the forms");
 			}
+		}
+
+		public function delete_product($id) {
+			return $this->db->query("DELETE FROM products WHERE id = ?", array($id));
 		}
 
 		//start get quantity sold
@@ -78,27 +84,16 @@
 		/*-----------------------------------------------------------------------------------------------------*/
 
 		// start product_page
-		public function products_admin($start, $limit) {
-			if ($this->session->userdata("search") == FALSE) {
-				return $this->db->query("SELECT * from products limit $start, $limit")->result_array();
-			}
-			else {
-				$search = $this->session->userdata("search");
-				$name = "%".$search['search']."%";
-				return $this->db->query("SELECT * from products 
-				  						WHERE name LIKE  ?	limit $start, $limit",array($name))->result_array();
-			}
+		public function products_admin($start, $limit, $search) {
+			$name = "%".$search."%";
+			return $this->db->query("SELECT * from products 
+			  						WHERE name LIKE  ? limit $start, $limit", array($name))->result_array();
+			
 		}
 
-		public function prod_tot_num() {
-			if ($this->session->userdata("search") == FALSE) {
-				return $this->db->query("SELECT * from products")->num_rows();
-			}
-			else {
-				$search = $this->session->userdata("search");
-				$name = "%".$search['search']."%";
-				return $this->db->query("SELECT * from products WHERE name LIKE ? ",array($name))->num_rows();
-			}
+		public function prod_tot_num($search) {
+			$name = "%".$search."%";
+			return $this->db->query("SELECT * from products WHERE name LIKE ? ", array($name))->num_rows();
 		}
 
 		//end product_page
@@ -117,40 +112,41 @@
 
 		/*-----------------------------------------------------------------------------------------------------*/
 		//start of get orders
-		public function get_transactions($start, $limit) {
+		public function get_transactions($start, $limit, $search_sort, $key) {
 			$limit_query = "LIMIT ".$start.", ".$limit;
-			return $this->transactions_query($limit_query)->result_array();
+			return $this->transactions_query($limit_query, $search_sort, $key)->result_array();
 		}
 
 		//end of get orders
 
 		/*-----------------------------------------------------------------------------------------------------*/
 		//start of getting total count of  orders
-		public function get_transactions_total_count() {
-			return $this->transactions_query("")->num_rows();
+		public function get_transactions_total_count($search_sort, $key) {
+			return $this->transactions_query("", $search_sort, $key)->num_rows();
 		}
 
-		public function transactions_query($limit) {
+		public function transactions_query($limit, $search_sort, $key) {
 			$search = "";
 			$status = "5";
-			$query_transaction = "SELECT transactions.id, CONCAT(users.fname,' ',users.lname) As name, 
+			$query_transaction = "SELECT transactions.id, CONCAT(users.fname,' ',users.lname) As name,
 				transactions.created_at, addresses.street, addresses.town, addresses.city, addresses.zip,
-				SUM(orders.total) total , transactions.status_id FROM orders 
+				SUM(orders.total) total, users.id As uid, transactions.status_id FROM orders 
 				LEFT JOIN users ON orders.user_id = users.id
 				LEFT JOIN transactions ON orders.transaction_id = transactions.id
 				LEFT JOIN addresses ON transactions.shipping_id = addresses.id
 				WHERE CONCAT(users.fname,' ',users.lname) LIKE ? || transactions.id LIKE ? 
 				|| transactions.status_id = ?
 				GROUP BY transactions.id $limit";
-			if ($this->Session->isSearch_notempty()) {
-				$store_session = $this->Session->search_orders();
-				$status = (isset($store_session['status_sort'])) ? $store_session["status_sort"] : "5";
-				$search = (isset($store_session["search_orders"]) ? "%".$store_session["search_orders"]."%" : 
-				($status != "5" ? "" : "%%")) ;
-			} 
-			else{
-				$search = "%%";
+			if ($key == "search_orders") {
 				$status = "5";
+				$search =  ($search_sort != "1") ? "%".urldecode($search_sort)."%" : "%%";
+			} 
+			else if ($key == "status_sort") {
+				$status = $search_sort;
+				$search = ($search_sort != "5") ? "" : "%%";
+			}
+			else{
+				//do nothing
 			}
 			$values = array($search, $search, $status);
 			return $this->db->query($query_transaction, $values);
@@ -173,6 +169,23 @@
 		//get category id by name we will use this if the select field is not equal to default
 		public function get_category_byname($name) {
 			return $this->db->query("SELECT id from categories WHERE name = ?",array($name))->row_array();
+		}
+
+		//get addresses of customer to use in show order
+
+		public function get_addresses_by_id($id) {
+			return $this->db->query("SELECT * FROM `addresses` WHERE id = ?",array($id))->row_array();
+		}
+		//show order get shipping and billing id
+		public function get_shipping_billing_id($id) {
+			return $this->db->query("SELECT * FROM `transactions` WHERE id = ?", 
+				array($id))->row_array();
+		}
+
+		//get customer name and id
+		public function get_customer_info_byid($id) {
+			return $this->db->query("SELECT * FROM users WHERE id = ?", 
+				array($id))->row_array();
 		}
 
 		public function get_category_byid($id) {

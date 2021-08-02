@@ -8,6 +8,7 @@
 		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> 
 	</div>
 	<form class="" action="myaccounts/changepass/<?= $info['id'] ?>" method="post" id="changepass-form">
+		<input type="hidden" name="csrf_test_name" value="<?= $token ?>">
 		<div id="input-div">
 			<label>New Password</label>
 			<input type="password" name="newpass" class="form-control" placeholder="New Password" id="newpass">
@@ -16,4 +17,5 @@
 			<input type="submit" value="Save" class="btn btn-primary" id="save-btn">
 		</div>
 	</form>
+	<div class="csrf_token" id="<?= $token ?>"></div>
 </div>

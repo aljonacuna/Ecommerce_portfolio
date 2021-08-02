@@ -7,8 +7,9 @@
 		style="display: <?= ($msg == '') ? 'none' : 'block' ?>;"><?= $msg ?>
 		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> 
 	</div>
-	<form action="myaccounts/update_user_info/<?= $info['id'] ?>" method="post" id="info-form">
+	<form action="<?= base_url() ?>myaccounts/update_user_info/<?= $info['id'] ?>" method="post" id="info-form">
 		<div id="input-div">
+			<input type="hidden" name="csrf_test_name" value="<?= $token ?>">
 			<label> First name</label>
 			<div class="link-input">
 				<input type="text" name="fname" class="form-control" value="<?= $info['fname'] ?>" id="fname">
@@ -24,4 +25,5 @@
 			<input type="submit" value="Save" class="btn btn-primary" id="save-btn">
 		</div>
 	</form>
+	<div class="csrf_token" id="<?= $token ?>"></div>
 </div>

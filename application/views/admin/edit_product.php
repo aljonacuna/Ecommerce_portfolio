@@ -10,10 +10,11 @@
 		<link rel="stylesheet" type="text/css" href="<?= asset_url() ?>css/scrollbar.css">
 		<link rel="stylesheet" type="text/css" href="<?= asset_url() ?>css/slider.css">
 		<link rel="stylesheet" type="text/css" href="<?= asset_url() ?>css/lightslider.css">
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link href="<?= asset_url() ?>fontawesome/css/all.css" rel="stylesheet">
 		<script type="text/javascript" src="<?= asset_url() ?>js/bootstrap.min.js"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.3.0/jquery.form.min.js"></script>
+		<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.3.0/jquery.form.min.js"></script> -->
+		<script type="text/javascript" src="<?= asset_url() ?>js/JQuery3.3.1.js"></script>
 		 <style type="text/css">
 		 	#preview_img{
 		 		margin-top: 5px;
@@ -31,11 +32,13 @@
 	</head>
 	<body>
 		<div class="row min-vh-100 flex-column flex-md-row">
-			<?php $this->load->view("admin/navbar", $products); ?>
+			<?php $this->load->view("admin/navbar", $active); ?>
 			<div class="col px-0 flex-grow-1">
 				<h2>Edit product</h2>
 				<div id="input-div" class="container-fluid">
 					<form action="<?= base_url()?>admins/edit_add_product" method="post" enctype="multipart/form-data" id="imageInputForm" multiple>
+						<input type="hidden" name="<?php echo $this->security->get_csrf_token_name();?>"
+							value="<?php echo $this->security->get_csrf_hash();?>">
 						<label>Name: </label>
 						<input type="hidden" name="tag" value="edit">
 						<input type="hidden" name="old_images" value="<?= $product['image'] ?>">
@@ -71,8 +74,8 @@
 						</select>
 						<label>Or add new category: </label>
 						<input type="text" name="category" placeholder="Add new category" class="form-control">
-						<div class="alert alert-primary d-flex align-items-center mt-2" role="alert">
-						  <i class="fa fa-info-circle mx-2" aria-hidden="true"></i> Choose 5 images at once, You cannot
+						<div class="alert alert-primary d-flex align-items-center mt-2 fs-6" role="alert">
+						  <i class="fas fa-info-circle mx-2 me-3"></i> Choose 5 images at once, You cannot
 						  change the image once you select it.
 						</div>
 						<label>Upload image: </label>

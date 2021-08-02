@@ -8,6 +8,9 @@ if ($page == 1) {
 <?php	} ?>
 		<form method="post" action="ajaxcustomers/switchpage" id="paging-form">
 			<input type="hidden" name="page" value="<?= $temp_page-=1 ?>">
+			<input type="hidden" name="csrf_test_name" value="<?= $token ?>">
+			<input type="hidden" name="search" value="<?= $search ?>">
+			<input type="hidden" name="key" value="<?= $key ?>">
 			<input type="submit" value="Prev" class="page-link">
 		</form>
 	</li>			
@@ -17,6 +20,9 @@ for ($x = $links_start ; $x <= $links_end  ; $x++) { ?>
 	<li class="page-item <?php echo ($page == $x)?"active":""?>" id="bot-paging-li">
 		<form method="post" action="ajaxcustomers/switchpage" id="paging-form">
 			<input type="hidden" name="page" value="<?= $x ?>">
+			<input type="hidden" name="csrf_test_name" value="<?= $token ?>">
+			<input type="hidden" name="search" value="<?= $search ?>">
+			<input type="hidden" name="key" value="<?= $key ?>">
 			<input type="submit" value="<?= $x ?>" class="page-link">
 		</form>
 	</li>
@@ -34,6 +40,9 @@ if ($links_end == $max_page) {
 <?php	}?>	
 		<form method="post" action="ajaxcustomers/switchpage" id="paging-form">
 			<input type="hidden" name="page" value="<?= $temp_page+=1 ?>">
+			<input type="hidden" name="csrf_test_name" value="<?= $token ?>">
+			<input type="hidden" name="search" value="<?= $search ?>">
+			<input type="hidden" name="key" value="<?= $key ?>">
 			<input type="submit" value="Next" class="page-link">
 		</form>
 	</li>

@@ -23,4 +23,12 @@
 	#logoff-li{
 		margin-top: 400px;
 	}
+	#welcome-div{
+		border-bottom: 1px solid white;
+		margin-bottom: 20px;
+		font-size: 12px;
+	}
+		#text-welcome{
+			font-size: 14px;
+		}
 }	

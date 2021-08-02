@@ -26,14 +26,18 @@
 		<div class="container-fluid" id="payment-div">
 			<h2 class="text-center">Dojo Ecommerce Payment</h2>
 			<div class="container-fluid" id="content">
-				<div class='alert alert-<?= ($success != "") ? "success" : "warning" ?> <?= ($success != "") ? "d-inline" : "d-none" ?> alert-dismissible fade show' role="alert" id="msg-div">
+				<div class='alert alert-<?= ($success != "") ? "success" : "warning" ?> 
+				<?= ($success != "" || $fail != "") ? "d-block" : "d-none" ?> alert-dismissible fade show' 
+				role="alert" id="msg-div">
 					<div class="error" id="error">
-						<?= ($success != "") ? $success : "" ?>
-					</div>
+						<p><?= ($success != "") ? $success : "" ?>
+						<?= ($fail != "") ? $fail : "" ?></p>
+ 					</div>
 					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> 
 				</div>
 				
 				<form action="<?= base_url() ?>handlePayment" method="post" class="form-validation" id="form-validation">
+					<input type="hidden" name="csrf_test_name" value="<?= $this->security->get_csrf_hash() ?>">
 					<div class="form-group ">
 						<label for="card">Card</label>
 						<div id="card_number" class="field form-control">
@@ -55,7 +59,7 @@
 						<label id="divider-p">/</label>
 						<input type="text" name="year" class="form-control" placeholder="(yy)" id="year"> -->
 					</div>
-					<input type="submit" value="Pay (&#8369; <?= $tot_amount ?>)" class="btn mt-5" id="payment-btn">
+					<input type="submit" value="Pay (&#8369; <?= $tot_amount+10 ?>)" class="btn mt-5" id="payment-btn">
 					<p id="line-left"></p><p class="text-center m-3" id="or-lbl">OR</p><p id="line-right"></p>
 					<a href="<?= base_url() ?>home" class="btn btn-primary w-100" id="btn-continue">Continue Shopping</a>
 				</form>

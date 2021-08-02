@@ -49,12 +49,16 @@
 			<div class="row justify-content-center h-100">
 				<div class="card my-auto bg-light" id="card-login">
 					<h4 class="text-center mt-3">Admin login page</h4>
-					<div class="alert alert-warning alert-dismissible fade show" role="alert" id="msg" style="text-align: center; display: <?php echo($msg_login!="")?"block":"none"; ?>">
-						<strong>Error: </strong><?= ($msg_login == "incorrect") ? "Incorrect email or password" : "Please enter correct credentials" ?>
+					<div class="alert alert-warning alert-dismissible fade show" role="alert" id="msg" style="text-align: center; display: <?php echo($msg_login!="" || $msg_not_admin != "") ? "block":"none"; ?>">
+						<strong>Error: </strong>
+						<?= ($msg_login == "" && $msg_not_admin == "" ? "Please enter correct credentials" 
+								: ($msg_not_admin != "" ? $msg_not_admin : "Incorrect email or password" ))  ?>
 						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 					</div>
 					<div class="card-body">
 						<form action="<?= base_url() ?>admin_login" method="post">
+							<input type="hidden" name="<?php echo $this->security->get_csrf_token_name();?>"
+							value="<?php echo $this->security->get_csrf_hash();?>">
 							<label>Email</label>
 							<input type="email" name="email_login" class="form-control" placeholder="Email Address">
 							 <p class="error"><?= ($msg_login!= "" && $msg_login != "incorrect") ? 
@@ -68,5 +72,6 @@
 				</div>
 			</div>
 		</div>
+		<?= $this->session->unset_userdata("msg_not_admin") ?>
 	</body>
 </html>

@@ -11,45 +11,65 @@
 		<link rel="stylesheet" type="text/css" href="<?= asset_url() ?>css/order_history.css">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.css">
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 		<script type="text/javascript" src="<?= asset_url() ?>js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="<?= asset_url() ?>js/JQuery3.3.1.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.js"></script>
 		<script type="text/javascript">
 			$(document).ready(function() {
+				var hash = "";
+				var which_tab = "";
 				$.get("<?= base_url()?>orderhistory/render_html", function(res) {
-				$("#main").html(res);
-				rateYo();
-			});
-
-			$(document).on("click", ".tag", function() {
-				var id = this.id
-				var which_tab = id.substr(-1, id.length);
-				var current = document.querySelector(".active-link");
-				current.classList.remove("active-link");
-				current.classList.add("inactive-link");
-				var active = document.getElementById(id);
-				active.classList.remove("inactive-link");
-				active.classList.add("active-link");
-				$.post("<?= base_url()?>orderhistory/switch_tab/" + which_tab, $(this).serialize(), function(res) {
 					$("#main").html(res);
 					rateYo();
+					setToken();
 				});
-				return false;
-			});
 
-			function rateYo() {
-				setTimeout(function() {
+				$(document).on("click", ".tag", function() {
+					var id = this.id;
+					which_tab = id.substr(-1, id.length);
+					var current = document.querySelector(".active-link");
+					current.classList.remove("active-link");
+					current.classList.add("inactive-link");
+					var active = document.getElementById(id);
+					active.classList.remove("inactive-link");
+					active.classList.add("active-link");
+					hash = refresh_token();
+					$.post("<?= base_url()?>orderhistory/switch_tab/" + which_tab, 
+						{"csrf_test_name": hash}, function(res) {
+						$("#main").html(res);
+						setToken();
+						rateYo();
+					});
+					return false;
+				});
+				// $(document).on("submit", "#review_form", function() {
+				// 	which_tab = (which_tab == "") ? "9" : which_tab;
+				// 	$.post("<?= base_url() ?>cart/review/"+which_tab, $(this).serialize(), function(res) {
+				// 		$('#review_modal').modal('hide');
+				// 		// $("#main").html(res);
+				// 		setToken();
+				// 	});
+				// 	return false;
+				// });
+				function rateYo() {
+					setTimeout(function() {
 						$(".rateYo").rateYo().on("rateyo.change", function (e, data) {
-				    	var rating = data.rating;
-				        $(this).parent().find('.score').text('score :'+ $(this).attr('data-rateyo-score'));
-				        $(this).parent().find('.result').text('Rating :'+ rating);
-				        $("div").parent().find('input[name=rating]').val(rating);
-				        $("div").parent().find('.rates').text("You rate this: "+rating);
-				        var id = $(this).parent().find('input[name=id]').val();
-				        $("div").parent().find("input[name=product_id]").val(id);
-					});		
-				}, 1000);
-			}
+					    	var rating = data.rating;
+					        $(this).parent().find('.score').text('score :'+ $(this).attr('data-rateyo-score'));
+					        $(this).parent().find('.result').text('Rating :'+ rating);
+					        $("div").parent().find('input[name=rating]').val(rating);
+					        $("div").parent().find('.rates').text("You rate this: "+rating);
+					        var id = $(this).parent().find('input[name=id]').val();
+					        $("div").parent().find("input[name=product_id]").val(id);
+						});		
+					}, 1000);
+				}
+				function refresh_token() {
+					return document.getElementsByClassName('csrf_token')[0].id;
+				}
+				function setToken() {
+					$('input[name=csrf_test_name]').val(refresh_token());
+				}
 			});
 			
 		</script>
@@ -89,7 +109,8 @@
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 					</div>
 					<div class="modal-body">
-						<form action="<?= base_url() ?>review" method="post">
+						<form action="<?= base_url() ?>cart/review" method="post" id="review_form">
+							<input type="hidden" name="csrf_test_name">
 							<label>Any comments</label>
 							<textarea name="comment" class="form-control comment"></textarea>
 							<input type="hidden" name="rating">

@@ -10,10 +10,10 @@
 		<link rel="stylesheet" type="text/css" href="<?= asset_url() ?>css/scrollbar.css">
 		<link rel="stylesheet" type="text/css" href="<?= asset_url() ?>css/slider.css">
 		<link rel="stylesheet" type="text/css" href="<?= asset_url() ?>css/lightslider.css">
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link href="<?= asset_url() ?>fontawesome/css/all.css" rel="stylesheet">
 		<script type="text/javascript" src="<?= asset_url() ?>js/bootstrap.min.js"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.3.0/jquery.form.min.js"></script>
+		<script type="text/javascript" src="<?= asset_url() ?>js/JQuery3.3.1.js"></script>
+		<script type="text/javascript" src="<?= asset_url() ?>js/add_prod.js"></script>
 		 <style type="text/css">
 		 	#preview_img{
 		 		margin-top: 5px;
@@ -28,77 +28,16 @@
 		 		margin-top: 10px;
 		 	}
 		 </style>
-		<script type="text/javascript">
-			// $(document).ready( function() {
-			// 	var image_file = document.getElementById("uploadImageFile");
-			// 	var all_input = document.querySelectorAll("input[class=form-control]");
-			// 	for(var x = 0 ; x < all_input.length ; x++) {
-			// 		all_input[x].addEventListener("keyup", function() {
-			// 			var id = this.id;
-			// 			var input_text = document.getElementById(id).value;
-			// 			document.getElementById(id+"-text").innerText = input_text;
-			// 		});
-			// 	}
-			// 	var desc = document.getElementById("desc");
-			// 	desc.addEventListener("keyup", function() {
-			// 		var desc_text = desc.value;
-			// 		document.getElementById("desc-text").innerText = desc_text;
-			// 	});
-			// 	image_file.addEventListener("change", function() {
-			// 		imagepreview();
-			// 	});
-			// 	function imagepreview() {
-			// 		document.getElementById("gallery").style.display = "block";
-			// 		var total_file = image_file.files.length;
-			// 		var count = 0;
-			// 		console.log(URL.createObjectURL(event.target.files[0]));
-			// 		if (total_file >= 5 && total_file <= 5) {
-			// 			for(var i = 0 ; i < total_file ; i++) {
-			// 				count++;
-			// 				$('#imagediv').append("<img src='"+ 
-			// 					URL.createObjectURL(event.target.files[i])+"' id='preview_img'>"+
-			// 					"<input type='radio' name='radio' class='form-check-input mt-3 mx-5'"+
-			// 					" value='"+count+"' id='main-radio"+count+"'>"+
-			// 					"<label>main</label><br>");
-			// 				$(".li-"+count).attr("data-thumb", URL.createObjectURL(event.target.files[i]));
-			// 				$(".img"+count).attr("src", URL.createObjectURL(event.target.files[i]));
-			// 			}
-			// 		}
-			// 		gallery();
-			// 		var all_radio = document.querySelectorAll("input[type=radio]");
-			// 		for(var x = 0 ; x < all_radio.length ; x++) {
-			// 			all_radio[x].addEventListener("click", function() {
-			// 				var id = this.id;
-			// 				var new_id = id.substr(-1, id.length)
-			// 				var prev_main = $(".img1").attr("src");
-			// 				var img = $(".img"+new_id).attr("src");
-			// 				$(".li-1").attr("data-thumb", img);
-			// 				$(".img1").attr("src", img);
-			// 				// gallery()
-			// 			});
-			// 		}
-			// 	}
-			// 	function gallery() {
-			// 		$('#gallery').lightSlider({
-			// 			gallery: true,
-			// 			item: 1,
-			// 			loop:false,
-			// 			slideMargin: 0,
-			// 			thumbItem: 5
-			// 		});
-			// 	}
-				
-			// });
-
-		</script>
 	</head>
 	<body>
 		<div class="row min-vh-100 flex-column flex-md-row">
-			<?php $this->load->view("admin/navbar", $products); ?>
+			<?php $this->load->view("admin/navbar", $active); ?>
 			<div class="col px-0 flex-grow-1">
 				<h2>Add product</h2>
 				<div id="input-div" class="container-fluid">
 					<form action="<?= base_url()?>admins/edit_add_product" method="post" enctype="multipart/form-data" id="imageInputForm" multiple>
+						<input type="hidden" name="<?php echo $this->security->get_csrf_token_name();?>"
+							value="<?php echo $this->security->get_csrf_hash();?>">
 						<input type="hidden" name="tag" value="add">
 						<label>Name: </label>
 						<input type="text" name="prodname" placeholder="Name" class="form-control" id="prodname">
@@ -122,7 +61,7 @@
 						<label>Or add new category: </label>
 						<input type="text" name="category" placeholder="Add new category" class="form-control">
 						<div class="alert alert-primary d-flex align-items-center mt-2" role="alert">
-						  <i class="fa fa-info-circle mx-2" aria-hidden="true"></i> Choose 5 images at once, You cannot
+						  <i class="fas fa-info-circle mx-2 me-3"></i> Choose 5 images at once, You cannot
 						  change the image once you select it.
 						</div>
 						<label >Upload image: </label>
@@ -163,6 +102,6 @@
 			</div>
 		</div>
 		<script type="text/javascript" src="<?= asset_url() ?>js/lightslider.js"></script>
-		<script src="<?= asset_url() ?>js/script.js" type="text/javascript"></script>
+<!-- 		<script src="<?= asset_url() ?>js/script.js" type="text/javascript"></script> -->
 	</body>
 </html>

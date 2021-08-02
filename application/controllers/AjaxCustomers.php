@@ -8,57 +8,22 @@
 		}
 
 		public function render_products() {
-			$this->load->view("partials_customer/home_customer",$this->get_pagination_data(1));
+			$filter['search'] = "";
+			$this->load->view("partials_customer/home_customer", $this->get_pagination_data(1, $filter));
 		}
 
-		public function sort_by() {
-			if (!$this->isSearch()) {
-				$to_search = ($this->input->post("sort") == TRUE) ? $this->input->post() : "";
-				$this->session->set_userdata("search", $to_search);
-			}
-			//else if post is empty add the session data to search else add the post data
-			else {
-				$to_search = ($this->input->post("sort") == FALSE) ? $this->session->userdata("search") : 
-				$this->input->post();
-				$this->session->set_userdata("search", $to_search);
-			}
-			$this->load->view("partials_customer/home_customer",$this->get_pagination_data(1));
+		public function sort_by($sort_param) {
+			$filter['sort'] = $sort_param;
+			$this->load->view("partials_customer/home_customer",$this->get_pagination_data(1, $filter));
 		}
 
-		public function search_category() {
-			//if there is no session and post is not empty add the current post data to session
-			if (!$this->isSearch()) {
-				$to_search = ($this->input->post("category") == TRUE) ? $this->input->post() : "";
-				$this->session->set_userdata("search", $to_search);
-			}
-			//else if post is empty add the session data to search else add the post data
-			else {
-				$to_search = ($this->input->post("category") == FALSE) ? $this->session->userdata("search") : 
-				$this->input->post();
-				$this->session->set_userdata("search", $to_search);
-			}
-			$this->load->view("partials_customer/home_customer",$this->get_pagination_data(1));
+		public function search_category($category_param) {
+			$filter['category'] = $category_param;
+			$this->load->view("partials_customer/home_customer",$this->get_pagination_data(1, $filter));
 		}
-		public function search_prodname() {
-			//if search box is empty reset the session so it will display all the items again
-			if(strlen($this->input->post("search")) == 0) {
-				if ($this->session->userdata("search") == TRUE) {
-					$this->session->unset_userdata("search");
-				} 
-			}
-
-			//if there is no session and post is not empty add the current post data to session
-			if ($this->session->userdata("search") == FALSE) {
-				$to_search = ($this->input->post("search") == TRUE) ? $this->input->post() : "";
-				$this->session->set_userdata("search", $to_search);
-			}
-			//else if post is empty add the session data to search else add the post data
-			else {
-				$to_search = ($this->input->post("search") == FALSE) ? $this->session->userdata("search") : 
-				$this->input->post();
-				$this->session->set_userdata("search", $to_search);
-			}
-			$this->load->view("partials_customer/home_customer",$this->get_pagination_data(1));
+		public function search_prodname($search_param) {
+			$filter['search'] = $search_param;
+			$this->load->view("partials_customer/home_customer",$this->get_pagination_data(1, $filter));
 		}
 
 		public function isSearch() {
@@ -72,23 +37,32 @@
 
 
 		public function switchpage() {
-			$input = $this->input->post("page");
-			$this->load->view("partials_customer/home_customer",$this->get_pagination_data($input));
+			$input = $this->input->post();
+			$page = $input['page'];
+			$filter[$input['key']] = $input['search'];
+			$this->load->view("partials_customer/home_customer",$this->get_pagination_data($page, $filter));
 		}
 
-		public function get_pagination_data($page) {
-			$sort = ($this->session->userdata("search") == TRUE) ? $this->session->userdata("search") : "";
-			$num_of_result = 9;
-			$rows = $this->Customer->get_totprod_count();
+		public function get_pagination_data($page_value, $search_sort_param) {
+			$key = 	(isset($search_sort_param['search']) ? "search" : 
+					(isset($search_sort_param['sort']) ? "sort" : 
+					(isset($search_sort_param['category']) ? "category" : "")));
+			$search_sort = isset($search_sort_param[$key]) ? $search_sort_param[$key] : "";
+			$num_of_result = 12;
+			$page = intval($page_value);
+			$rows = $this->Customer->get_totprod_count($search_sort_param[$key], $key);
 			$num_of_page = (round($rows / $num_of_result) + 1 >= $page + 8) ? $page + 8 : round($rows / $num_of_result) + 1; 
 			$start = ($page-1) * $num_of_result;
             $data['links_end'] = $num_of_page;
             $data['links_start'] = $page;
             $data['max_page'] = round($rows / $num_of_result);
             $data['page'] = $page;
-            $data['current_category'] = ($this->input->post("category") == TRUE) ? $this->input->post("category") : "";
-            $data['sort_by'] = (isset($sort["sort"])) ? $sort["sort"] : "";
-			$data['products'] = $this->Customer->get_all_products($start, $num_of_result);
+            $data['search'] = $search_sort;
+            $data['key'] = $key;
+            $data['current_category'] =  (isset($search_sort_param["category"])) ? $search_sort_param["category"] : "";
+            $data['sort_by'] = (isset($search_sort_param["sort"])) ? $search_sort_param["sort"] : "";
+			$data['products'] = $this->Customer->get_all_products($start, $num_of_result, $search_sort_param[$key], $key);
+			$data['token'] = $this->security->get_csrf_hash();
 			return $data;
 		}
 	}

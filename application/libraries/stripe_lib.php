@@ -24,6 +24,8 @@
 		}
 		public function create_charge($tot_amount, $customer) {
 			try {
+				//plus 10 for shpping fee fix 10 for now
+				$tot_amount = $tot_amount + 10;
 				$charge = \Stripe\Charge::create(array(
 	                "amount" => 100 * $tot_amount,
 	                "currency" => "php",

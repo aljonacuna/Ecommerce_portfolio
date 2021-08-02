@@ -95,12 +95,12 @@ label, p{
 @media only screen and (min-width: 1024px){
 	#shipping-billing-info{
 		width: 20%;
-		margin: 10px 0px 0px 40px;
+		margin: 40px 0px 0px 40px;
 	}
 	#order-details{
 		width: 70%;
-		margin-left: 20px;
-		vertical-align: 125px; 
+		margin: 40px 0px 0px 20px;
+		vertical-align: top;
 	}
 		#order-section{
 			width: 90%;

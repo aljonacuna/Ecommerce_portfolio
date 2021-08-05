@@ -2,13 +2,13 @@
 	class Session extends CI_Model {
 		
 		//get the users info on the session
-		public function get_session_userdata() {
-			return $this->session->userdata("info");
+		public function get_session_userdata($user_type) {
+			return $this->session->userdata("info_".$user_type);
 		}
 
 		//to check if there are currently logged in user
-		public function is_loggedin() {
-			if ($this->session->userdata("info") == TRUE) {
+		public function is_loggedin($user_type) {
+			if ($this->session->userdata("info_".$user_type)) {
 				return true;
 			}
 			else{

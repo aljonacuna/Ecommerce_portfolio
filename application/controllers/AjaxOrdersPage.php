@@ -10,52 +10,53 @@
 		public function orders_status() {
 			$input = $this->input->post();
 			$this->Admin->set_order_status($input);
-			$this->load->view("partials_admin/dashboard_page", $this->get_pagination_data(1));
+			$page = $input['page'];
+			$search[$input['key']] = $input['search_paging'];
+			$this->load->view("partials_admin/dashboard_page", $this->get_pagination_data($page, $search));
 		}
 
 		public function render_orders() {
-			$this->load->view("partials_admin/dashboard_page", $this->get_pagination_data(1));
+			$param['search_orders'] = "";
+			$this->load->view("partials_admin/dashboard_page", $this->get_pagination_data(1, $param));
 		}
 		public function switch_page() {
-			$input = $this->input->post("page");
-			$this->load->view("partials_admin/dashboard_page", $this->get_pagination_data($input));
+			$input = $this->input->post();
+			$page = $input['page'];
+			$search[$input['key']] = $input['search_paging'];
+			$this->load->view("partials_admin/dashboard_page", $this->get_pagination_data($page, $search));
+		}
+		public function sort_by_status($sort_param) {
+			$sort['status_sort'] = $sort_param;
+			$this->load->view("partials_admin/dashboard_page", $this->get_pagination_data(1, $sort));
+		}
+		public function search_orders($search_param) {
+			$search['search_orders'] = $search_param;
+			$this->load->view("partials_admin/dashboard_page", $this->get_pagination_data(1, $search));
 		}
 
-		public function search_orders() {
-			//if search box is empty reset the session so it will display all the items again
-			if(strlen($this->input->post("search_orders")) == 0) {
-				if ($this->session->userdata("search_orders") == TRUE) {
-					$this->session->unset_userdata("search_orders");
-				} 
-			}
-
-			//if there is no session and post is not empty add the current post data to session
-			if ($this->session->userdata("search_orders") == FALSE) {
-				$to_search = ($this->input->post("search_orders") == TRUE) ? $this->input->post() : "";
-				$this->session->set_userdata("search_orders", $to_search);
-			}
-			//else if post is empty add the session data to search else add the post data
-			else {
-				$to_search = ($this->input->post("search_orders") == FALSE) ?
-				 $this->session->userdata("search_orders") : $this->input->post();
-				$this->session->set_userdata("search_orders", $to_search);
-			}
-			$this->load->view("partials_admin/dashboard_page", $this->get_pagination_data(1));
-		}
-
-		public function get_pagination_data($page) {
-		
+		public function get_pagination_data($page, $search_sort_param) {
+			$key = 	(isset($search_sort_param['search_orders']) ? "search_orders" : 
+					(isset($search_sort_param['status_sort']) ? "status_sort" : ""));
+			$search_sort = isset($search_sort_param[$key]) ? $search_sort_param[$key] : "";
 			$num_of_result = 5;
-			$rows = $this->Admin->get_transactions_total_count();
-			$num_of_page = (round($rows / $num_of_result) + 1 >= $page + 2) ? $page + 2 : round($rows / $num_of_result) + 1; 
-			$start = ($page-1) * $num_of_result;
+			$rows = $this->Admin->get_transactions_total_count($search_sort, $key);
+			$num_of_page = (round($rows / $num_of_result) + 1 >= intval($page) + 2) ? 
+			intval($page) + 2 : round($rows / $num_of_result) + 1; 
+			$start = (intval($page)-1) * $num_of_result;
 			// $data["msg"] = ($this->session->flashdata("msg_orders") == TRUE) ?
 			//  $this->session->flashdata("msg_orders") : "";
             $data['links_end'] = $num_of_page;
-            $data['links_start'] = $page;
+            $data['links_start'] = intval($page);
             $data['max_page'] = round($rows / $num_of_result);
-            $data['page'] = $page;
-			$data['orders'] = $this->Admin->get_transactions($start, $num_of_result);
+            $data['page'] = intval($page);
+            $data['search'] = $search_sort;
+            $data['key'] = $key;
+            $data['num_orders'] = $this->Admin->dashboard_num_order("");
+			$data['process'] = $this->Admin->dashboard_num_order("0");
+			$data['shipped'] = $this->Admin->dashboard_num_order("1");
+			$data['canceled'] = $this->Admin->dashboard_num_order("2");
+        	$data['token'] = $this->security->get_csrf_hash();
+			$data['orders'] = $this->Admin->get_transactions($start, $num_of_result, $search_sort, $key);
 			return $data;
 		}
 	}

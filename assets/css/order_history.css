@@ -96,6 +96,55 @@
 
 
 @media only screen and (min-width: 481px){
+	#main-div{
+		width: 100%;
+	}
+		#prod-img{
+			width: 70%;
+			height: 300px;
+			margin: 0px 15% 0px 15%;
+		}
+		#img-div, #details{
+			display: block;
+		}
+		#img-div{
+			width: 100%;
+		}
+		#details{
+			font-size: 14px;
+			width: 100%;
+		}
+		#tot-price, #status{
+			display: inline-block;
+			font-size: 12px;
+		}
+		#status{
+			margin: 0px 0px 0px 20px;
+		}
+		#date-ordered{
+			width: 100%;
+		}
+		#description-p{
+			overflow-y: scroll;
+			height: 100px;
+		}
+		.rates{
+			font-size: 16px;
+			margin-left: 10px;
+		}
+		#empty-order{
+			width: 100%;
+			margin: 10px 0px 0px 0px;
+			height: 400px;
+			padding-top: 100px;
+		}
+			#empty-order-content{
+				text-align: center;
+			}
+				#empty-order-img{
+					width: 20%;
+					height: 100px;
+				}
 	
 }
 @media only screen and (min-width: 1024px){
@@ -104,7 +153,8 @@
 	}
 		#prod-img{
 			width: 90%;
-			height: 200px;
+			height: 250px;
+			margin: 0px;
 		}
 		#img-div, #details{
 			display: inline-block;
@@ -115,6 +165,7 @@
 		}
 		#details{
 			width: 60%;
+			font-size: 18px;
 		}
 		.rates{
 			margin-left: 20px;

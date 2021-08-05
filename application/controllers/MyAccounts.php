@@ -12,7 +12,7 @@
 		}
 
 		public function update_user_info($id){
-			$data['info'] = $this->Session->get_session_userdata();
+			$data['info'] = $this->Session->get_session_userdata("customer");
 			$input = $this->input->post();
 			$result = $this->Customer->update_user_info($input, $data['info']['email'], $id);
 			$this->switch_page("info-btn");
@@ -31,7 +31,8 @@
 		}
 
 		public function switch_page($page) {
-			$data['info'] = $this->Session->get_session_userdata();
+			$data['info'] = $this->Session->get_session_userdata("customer");
+			$data['token'] = $this->security->get_csrf_hash();
 			if ($page == "info-btn") {
 				$data['msg'] = ($this->session->flashdata("msg") == TRUE) ? $this->session->flashdata("msg") : "";
 				$this->load->view("partials_customer/user_info", $data);

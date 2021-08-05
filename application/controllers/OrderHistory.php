@@ -15,9 +15,10 @@
 		}
 
 		public function display($tab) {
-			$data['info'] = ($this->Session->is_loggedin()) ?
-			$this->Session->get_session_userdata() : array();
+			$data['info'] = ($this->Session->is_loggedin("customer")) ?
+			$this->Session->get_session_userdata("customer") : array();
 			$data['order_history'] = $this->Customer->order_history($data['info']['id'], $tab);
+			$data['token'] = $this->security->get_csrf_hash();
 			if (is_null($data['order_history']) || sizeof($data['order_history']) == 0) {
 				if ($tab == "" || $tab == 0) {
 					$data['lbl'] = "No orders yet";

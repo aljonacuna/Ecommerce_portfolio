@@ -3,11 +3,12 @@
 <nav aria-label="Top pages" id="top-paging">
 	<?php $this->load->view("partials_customer/pages_btn.php"); ?>
 </nav>
-<form id="sort-form" action="ajaxcustomers/sort_by" method="post">
+<form id="sort-form" method="post">
 	<label id="sprt-lbl">Sorted by:</label>
+	<input type="hidden" name="csrf_test_name" id="csrf_token">
 	<select class="form-select" aria-label="sort" id="sort-list" name="sort">
-		<option value="0" <?= ($sort_by != "most" || $sort_by != "low" || $sort_by != "high") ? "selected" : "" ?>>
-				---Choose to sort---
+		<option value="5" <?= ($sort_by != "most" || $sort_by != "low" || $sort_by != "high") ? "selected" : "" ?>>
+				Show All
 		</option>
 		<option value="most" <?= ($sort_by == "most") ? "selected" : "" ?>>Most popular</option>
 		<option value="low" <?= ($sort_by == "low") ? "selected" : "" ?>>Lowest price</option>
@@ -18,6 +19,7 @@
 <?php
 foreach ($products as $value) { 
 	$img_explode = explode(",", $value['image']);
+	$prod_name = (strlen($value['name'])) >= 12 ? substr($value['name'], 0, 12).".." : $value['name'];
 	$main_img = "";
 	foreach ($img_explode as  $value_image) {
 		if (substr($value_image, 0,5) == "main:") {
@@ -25,10 +27,10 @@ foreach ($products as $value) {
 		}
 	}
 ?>
-<div class="card" style="width: 18rem;" id="card">
+<div class="card" id="card">
 	<a href="<?= base_url() ?>showproduct/<?= $value['id'] ?>/<?= $value['category_id'] ?>"><img src="<?= base_url()?>uploads/<?= $main_img ?>" class="card-img-top" alt="Product" id="prod-img"></a>
 	<div class="card-body">
-		<h5 class="card-title" id="prod-name"><?= $value['name'] ?></h5>
+		<h5 class="card-title" id="prod-name"><?= $prod_name ?></h5>
 		<p class="card-text fs-6 fw-bold" id="price">&#8369; <?= $value['price']?> </p>
 	</div>
 </div>
@@ -37,3 +39,4 @@ foreach ($products as $value) {
 <nav aria-label="Paging" id="paging-bottom">
 	<?php $this->load->view("partials_customer/pages_btn.php"); ?>
 </nav>
+<div class="csrf_token" id="<?= $token ?>"></div>

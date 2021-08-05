@@ -42,6 +42,8 @@
 						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 					</div>
 					<form action="<?= base_url() ?>login" method="post">
+						<input type="hidden" name="<?php echo $this->security->get_csrf_token_name();?>"
+							value="<?php echo $this->security->get_csrf_hash();?>">
 						<label for="email_login">Email address</label>
 						<div class="input-group mb-3">
 						  <i class=" input-group-text fa fa-envelope-o" aria-hidden="true" id="basic-addon1"></i>
@@ -76,6 +78,8 @@
 					</div>
 				  		<form class="row" action="<?= base_url() ?>register" method="post" id="reg-form">
 					  		<input type="hidden" name="active" value="register">
+					  		<input type="hidden" name="<?php echo $this->security->get_csrf_token_name();?>"
+							value="<?php echo $this->security->get_csrf_hash();?>">
 					  		<div class="col-md-6">
 								<label for="fname" class="form-label">Fist name</label>
 								<input type="text" name="fname" class="form-control" id="fname">

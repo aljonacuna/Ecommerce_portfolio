@@ -10,106 +10,14 @@
 		<link rel="stylesheet" type="text/css" href="<?= asset_url() ?>css/scrollbar.css">
 		<link rel="stylesheet" type="text/css" href="<?= asset_url() ?>css/slider.css">
 		<link rel="stylesheet" type="text/css" href="<?= asset_url() ?>css/lightslider.css">
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link href="<?= asset_url() ?>fontawesome/css/all.css" rel="stylesheet">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.css">
 		<script type="text/javascript" src="<?= asset_url() ?>js/bootstrap.min.js"></script>
 		<script type="text/javascript" src="<?= asset_url() ?>js/JQuery3.3.1.js"></script>
 		<script type="text/javascript" src="<?= asset_url() ?>js/lightslider.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.js"></script>
-<!-- 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
 		<script src="jquery.js"></script>
 		<script src="jquery.rateyo.js"></script>
-		<script type="text/javascript">
-			$(document).ready(function() {
-				var addtocart = document.getElementById("add-to-cart-btn");
-				//for increasing and decreasing the quantity
-				var count = 1;
-				var qty_btn = document.querySelectorAll("div[data=qty-btn]");
-				var stocks = document.getElementById("qty").value;
-				$("#rateYo").rateYo({
-			   		rating: <?= round($avg_reviews['rating'])?>
-			  	});
-
-				var option = {
-					animation: true,
-					delay: 5000
-				};
-				$.get("<?= base_url() ?>cart/load_nav/<?= $product['id'] ?>", function(res) {
-					$("#nav").html(res);
-				});
-				$("#add-cart-form").submit(function() {
-					if (parseInt(qty_cart()) + parseInt(qty_order(count)) <= parseInt(stocks)) {
-						$.post($(this).attr("action"), $(this).serialize(), function(res) {
-							$("#nav").html(res);
-						});
-					}
-					else {
-
-					}
-					return false;
-				});
-				for (var i = 0 ; i < qty_btn.length ; i++) {
-					qty_btn[i].addEventListener("click", function() {
-						var id = this.id;
-						if (id == "increment-btn") {
-							increase_price();
-						}
-						else if(id == "decrement-btn"){
-							decrease_price();
-						}
-						else {
-
-						}
-					});
-				}
-				function qty_cart() {
-					var qty = document.getElementById("cart_qty").value;
-					return qty;
-				}
-				function qty_order(value) {
-					var qty_order = document.getElementById("quantity").value = value;
-					return qty_order;
-				}
-				function increase_price() {
-					// document.getElementById("quantity").value = count+=1;
-					qty_order(count+=1);
-					tot_price();	
-				}
-				function decrease_price() {
-					var qty = qty_order(count);
-					count = (qty > 1) ? count-=1 : 1;
-					tot_price();
-				}
-				function tot_price() {
-					var qty = qty_order(count);
-					var tot = <?= $product['price'] ?> * qty;
-					document.getElementById("price").innerHTML = "Price: &#8369;"+tot;		
-				}
-				
-				addtocart.addEventListener("click", function() {
-					var text_toast = document.getElementById("text-toast");
-					var icon_toast = document.querySelector("#icon-success");
-					var toast_div = document.getElementById("toast-msg");
-					if (parseInt(qty_cart()) + parseInt(qty_order(count)) <= parseInt(stocks)) {
-						
-					}
-					else {
-						toast_div.style.background = "#f8d7da";
-						toast_div.style.height = "180px";
-						icon_toast.classList.remove("fa-check-circle");
-						icon_toast.classList.add("fa-exclamation-circle");
-						text_toast.style.fontSize = "16px";
-						text_toast.style.color = "#842029";
-						text_toast.innerText = "Unable to add the item in the cart, there are only "+<?= $product['qty']?>+" item/s left in the stocks";
-					}
-					
-					var toast_msg = new bootstrap.Toast(toast_div, option);
-					toast_msg.show();
-				});
-
-			});
-			
-		</script>
 	</head>
 	<body>	
 		<!-- navbar section -->
@@ -125,10 +33,6 @@
 			</ol>
 		</nav>
 		
-		<!-- product review section -->
-		<!-- <div class="container-fluid" id="review-div">
-
-		</div> -->
 		<div id="main">
 			<!-- product section -->
 			<div class="container-fluid" id="product-section">
@@ -162,10 +66,14 @@
 				<p id="description-p"><?= $product['desc'] ?></p>
 				<span class="fw-bolder heading">Product Rating</span>
 				<div id="rateYo" data-rateyo-num-stars="5"></div>
-				<p><?= round($avg_reviews['rating']) ?> average based on <?= $avg_reviews['total'] ?> reviews.</p>
+				<p><span id="reviews-text">
+					<?= round($avg_reviews['rating']) ?> average based on <?= $avg_reviews['total'] ?>
+				</span> reviews.</p>
 				<form action="<?= base_url() ?>addtocart" method="post" id="add-cart-form">
-					<p id="price">Price: &#8369;<?= $product['price'] ?></p>
-					<input type="hidden" name="id" value="<?= $product['id'] ?>">
+					<p id="price">Price: &#8369;<span id="price-text"><?= $product['price'] ?></span></p>
+					<input type="hidden" name="csrf_test_name" id="csrf_token">
+					<input type="hidden" name="id" value="<?= $product['id'] ?>" id="prod_id">
+					<input type="hidden" name="price_prod" id="price_prod" value="<?= $product['price'] ?>">
 					<input type="hidden" name="category_id" value="<?= $product['category_id'] ?>">
 					<input type="hidden" name="prod_name" value="<?= $product['name'] ?>">
 					<input type="hidden" name="prod_img" value="<?= $main_image ?>" name="">
@@ -240,5 +148,6 @@
 		<!-- footer section -->
 		<?php $this->load->view("partials_customer/footer_customer"); ?>
 		<script src="<?= asset_url() ?>js/script.js" type="text/javascript"></script>
+		<script type="text/javascript" src="<?= asset_url() ?>js/show_prod.js"></script>
 	</body>
 </html>							

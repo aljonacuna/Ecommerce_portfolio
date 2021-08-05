@@ -95,25 +95,25 @@ label, p{
 @media only screen and (min-width: 1024px){
 	#shipping-billing-info{
 		width: 20%;
-		margin: 10px 0px 0px 40px;
+		margin: 40px 0px 0px 40px;
 	}
 	#order-details{
 		width: 70%;
-		margin-left: 20px;
-		vertical-align: 125px; 
+		margin: 40px 0px 0px 20px;
+		vertical-align: top;
 	}
 		#order-section{
 			width: 90%;
 			height: 300px;
 		}
 		#order-status{
-			width: 30%;
+			width: 40%;
 			height: 55px;
-			margin-left: 50px;
+			margin-left: 10px;
 		}
 		#order-subtotal{
-			width: 20%;
-			margin-left: 100px;
+			width: 30%;
+			margin-left: 50px;
 			vertical-align: -60px;
 		}
 }	

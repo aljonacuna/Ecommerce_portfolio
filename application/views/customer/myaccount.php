@@ -8,55 +8,10 @@
 		<link rel="stylesheet" type="text/css" href="<?= asset_url() ?>css/nav_footer.css">
 		<link rel="stylesheet" type="text/css" href="<?= asset_url() ?>css/scrollbar.css">
 		<link rel="stylesheet" type="text/css" href="<?= asset_url() ?>css/myaccount.css">
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link href="<?= asset_url() ?>fontawesome/css/all.css" rel="stylesheet">
 		<script type="text/javascript" src="<?= asset_url() ?>js/bootstrap.min.js"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-		<script type="text/javascript">
-			$(document).ready(function() {
-				$.get("myaccounts", function(res) {
-					$("#content").html(res);
-				});
-
-				$(document).on("click", ".tag", function() {
-					var id = this.id;
-					var current = document.querySelector(".active-link");
-					current.classList.remove("active-link");
-					current.classList.add("inactive-link");
-					var active = document.getElementById(id);
-					active.classList.remove("inactive-link");
-					active.classList.add("active-link");
-					$.post("myaccounts/switch_page/" + id, $(this).serialize(), function(res) {
-						$("#content").html(res);
-					});
-					return false;
-				});
-				$(document).on("submit", "form", function() {
-					$.post($(this).attr("action"), $(this).serialize(), function(res) {
-						$("#content").html(res);
-					});
-					return false;
-				});
-				$(document).on("click", ".edit-address", function() {
-					id = this.id;
-					if (id == "edit-shipping") {
-						all_input("shipping");
-						document.getElementById("save-btn-shipping").disabled = false;
-					}
-					else {
-						all_input("billing");
-						document.getElementById("save-btn-billing").disabled = false;
-					}
-				});
-				function all_input(input) {
-					var all_input = document.getElementsByClassName(input);
-					console.log(all_input);
-					for (var x = 0 ; x < all_input.length ; x++) {
-						document.getElementById(all_input[x].id).disabled = false;
-					}
-
-				}
-			});
-		</script>
+		<script type="text/javascript" src="<?= asset_url() ?>js/JQuery3.3.1.js"></script>
+		<script type="text/javascript" src="<?= asset_url() ?>js/myaccount.js"></script>
 	</head>
 	<body>
 		<!-- nav bar section -->
@@ -73,6 +28,15 @@
 		<!-- main content -->
 		<div class="container-fluid" id="main">
 			<h2 id="lbl-myaccount">My Account</h2>
+			<!-- breadcrumb -->
+			<nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb" id="breadcrumb">
+				<ol class="breadcrumb px-2">
+					<li class="breadcrumb-item"><a class="text-warning" id="home-link" 
+						href="<?= base_url() ?>home" id="continue-shopping-link">Home</a></li>
+					<li class="breadcrumb-item active" aria-current="page"><a class="text-decoration-none">
+						Profile</a></li>
+				</ol>
+			</nav>
 			<div id="side-nav">
 				<ul class="navbar-nav me-auto mb-2 mb-lg-0" id="side-nav-ul">
 		    		<li class="nav-item nav-li" id="info">
@@ -89,8 +53,7 @@
 	      		</ul>
 			</div>
 			<div class="container-fluid" id="content">
-				
-				
+					
 			</div>
 		</div>
 		<!-- footer section -->

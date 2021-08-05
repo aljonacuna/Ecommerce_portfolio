@@ -77,7 +77,7 @@
 								<td><?= $value['name'] ?></td>
 								<td><?= $value['price'] ?></td>
 								<td><?= $value['quantity'] ?></td>
-								<td>$<?= $value['total'] ?> </td>
+								<td>&#8369;<?= $value['total'] ?> </td>
 							</tr>
 				<?php 	}
 				    ?>
@@ -107,9 +107,9 @@
 							<p>Status: <?= $status ?></p>
 						</section>
 						<section class="container-fluid" id="order-subtotal">
-							<p id="total-fee-p">Sub total: $<?= $total ?></p>
-							<p id="total-fee-p">Shipping: $<?= $shipping_fee ?></p>
-							<p id="total-fee-p">Total price: $<?= $total + $shipping_fee ?></p>
+							<p id="total-fee-p">Sub total: &#8369;<?= $total ?></p>
+							<p id="total-fee-p">Shipping: &#8369;<?= $shipping_fee ?></p>
+							<p id="total-fee-p">Total price: &#8369;<?= $total + $shipping_fee ?></p>
 						</section>
 					</div>
 				</div>

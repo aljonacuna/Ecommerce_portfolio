@@ -158,7 +158,7 @@
 		public function get_all_categories() {			
 			return $this->db->query("SELECT categories.name, COUNT(products.category_id)as num_category from categories
 									INNER JOIN products on products.category_id = categories.id
-									GROUP BY categories.id 
+									GROUP BY categories.name 
 									ORDER BY categories.name asc")->result_array();
 		}
 

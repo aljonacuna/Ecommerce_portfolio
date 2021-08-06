@@ -82,7 +82,7 @@ $db['default'] = array(
 	// 'database' => 'mydb',
 
 	//production
-	'hostname' => 'remotemysql.com:3306',
+	'hostname' => 'remotemysql.com',
 	'username' => 'qi2fssqwUO',
 	'password' => 'I9sMpj0kn8',
 	'database' => 'qi2fssqwUO',

@@ -4,6 +4,7 @@
 		
 		public function __construct() {
 			parent::__construct();
+			
 			$this->load->model("Customer");
 			$this->load->model("Session");
 		}
@@ -48,6 +49,7 @@
 				}
 				
 			}
+			// $this->output->enable_profiler(1);
 			$this->load->view("customer/show_product",$data);
 		}
 

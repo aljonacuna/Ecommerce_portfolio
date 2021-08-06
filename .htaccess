@@ -1,6 +1,6 @@
  RewriteEngine On
- RewriteBase /dojocommerce.herokuapp.com
+ RewriteBase /ecommerce
   RewriteCond $1 !^(index\.php|assets|images|css|js|robots\.txt|favicon\.ico)  
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule ^(.*)$ /dojocommerce.herokuapp.com/index.php?/$1 [L,QSA]
+  RewriteRule ^(.*)$ /ecommerce/index.php?/$1 [L,QSA]

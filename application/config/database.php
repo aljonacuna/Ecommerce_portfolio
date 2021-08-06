@@ -76,16 +76,16 @@ $query_builder = TRUE;
 $db['default'] = array(
 	'dsn'	=> '',
 	//development
-	'hostname' => 'localhost',
-	'username' => 'root',
-	'password' => '',
-	'database' => 'mydb',
+	// 'hostname' => 'localhost',
+	// 'username' => 'root',
+	// 'password' => '',
+	// 'database' => 'mydb',
 
 	//production
-	// 'hostname' => 'remotemysql.com:3306',
-	// 'username' => 'qi2fssqwUO',
-	// 'password' => 'I9sMpj0kn8',
-	// 'database' => 'qi2fssqwUO',
+	'hostname' => 'remotemysql.com:3306',
+	'username' => 'qi2fssqwUO',
+	'password' => 'I9sMpj0kn8',
+	'database' => 'qi2fssqwUO',
 
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
